@@ -2,24 +2,88 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red de Colaboradores (v2)</title>
+    <title>Buscador de Personas por Campos</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="main-container">
-        <div id="filters-container">
+    <div class="container">
+        <div class="filters">
             <h2>Filtros</h2>
-            <p>Expande cada categoría y selecciona indicadores para visualizar las conexiones.</p>
+
+            <div class="filter-group" style="border-color: #FF5733;">
+                <label for="especie">Especie</label>
+                <div class="dropdown-content" id="especie-dropdown">
+                    <label><input type="checkbox" value="Ovina"> Ovina</label>
+                    <label><input type="checkbox" value="Caprina"> Caprina</label>
+                    <label><input type="checkbox" value="Vacuna"> Vacuna</label>
+                    <label><input type="checkbox" value="Porcina"> Porcina</label>
+                    <label><input type="checkbox" value="Avícola"> Avícola</label>
+                    <label><input type="checkbox" value="Cunícula"> Cunícula</label>
+                </div>
+            </div>
+
+            <div class="filter-group" style="border-color: #33FF57;">
+                <label for="tecnologia">Tecnología</label>
+                <div class="dropdown-content" id="tecnologia-dropdown">
+                    <label><input type="checkbox" value="Identificación y monitorización"> Identificación y monitorización</label>
+                    <label><input type="checkbox" value="Detección y medición"> Detección y medición</label>
+                    <label><input type="checkbox" value="Biosensores"> Biosensores</label>
+                    <label><input type="checkbox" value="Posicionamiento y navegación"> Posicionamiento y navegación</label>
+                    <label><input type="checkbox" value="Automatización y robots"> Automatización y robots</label>
+                    <label><input type="checkbox" value="Análisis de imágenes"> Análisis de imágenes</label>
+                    <label><input type="checkbox" value="Ciencia de datos"> Ciencia de datos</label>
+                </div>
+            </div>
+
+            <div class="filter-group" style="border-color: #3357FF;">
+                <label for="lineas">Líneas de Estudio</label>
+                <div class="dropdown-content" id="lineas-dropdown">
+                    <label><input type="checkbox" value="Salud animal"> Salud animal</label>
+                    <label><input type="checkbox" value="Optimización de recursos"> Optimización de recursos</label>
+                    <label><input type="checkbox" value="Comportamiento animal"> Comportamiento animal</label>
+                    <label><input type="checkbox" value="Monitoreo de emisiones"> Monitoreo de emisiones</label>
+                    <label><input type="checkbox" value="Reproducción y mejora genética"> Reproducción y mejora genética</label>
+                </div>
+            </div>
+
+            <div class="filter-group" style="border-color: #FF33A8;">
+                <label for="rol">Rol</label>
+                <div class="dropdown-content" id="rol-dropdown">
+                    <label><input type="checkbox" value="IP"> IP</label>
+                    <label><input type="checkbox" value="Postdoc"> Postdoc</label>
+                    <label><input type="checkbox" value="Predoc"> Predoc</label>
+                    <label><input type="checkbox" value="Técnico"> Técnico</label>
+                    <label><input type="checkbox" value="Asesor científico"> Asesor científico</label>
+                </div>
+            </div>
+
+            <div class="filter-group" style="border-color: #A833FF;">
+                <label for="institucion">Institución</label>
+                <div class="dropdown-content" id="institucion-dropdown">
+                    <label><input type="checkbox" value="CICYTEX"> CICYTEX</label>
+                    <label><input type="checkbox" value="CSIC/INIA"> CSIC/INIA</label>
+                    <label><input type="checkbox" value="IRTA"> IRTA</label>
+                    <label><input type="checkbox" value="IUCA"> IUCA</label>
+                    <label><input type="checkbox" value="NEIKER"> NEIKER</label>
+                    <label><input type="checkbox" value="UAB"> UAB</label>
+                    <label><input type="checkbox" value="UCO"> UCO</label>
+                    <label><input type="checkbox" value="UdL/Agrotecnio"> UdL/Agrotecnio</label>
+                    <label><input type="checkbox" value="UM"> UM</label>
+                    <label><input type="checkbox" value="USAL"> USAL</label>
+                    <label><input type="checkbox" value="USC/Campus Terra"> USC/Campus Terra</label>
+                    <label><input type="checkbox" value="UPV"> UPV</label>
+                </div>
+            </div>
         </div>
 
-        <div id="network-container"></div>
+        <div class="network-container">
+            <div id="network"></div>
+            <div id="person-info-box" class="person-info-box"></div>
+        </div>
     </div>
 
-    <div id="tooltip"></div>
-
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/vis-network/dist/vis-network.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

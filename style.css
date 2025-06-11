@@ -1,141 +1,110 @@
-/* --- Estructura Principal y Estilos Globales --- */
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-family: Arial, sans-serif;
     margin: 0;
-    height: 100vh;
-    overflow: hidden;
-    background-color: #f8f9fa;
-    color: #343a40;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f4f4;
 }
 
-.main-container {
-    display: grid;
-    grid-template-columns: 320px 1fr;
+.container {
+    display: flex;
     width: 100%;
-    height: 100%;
 }
 
-/* --- Panel de Filtros (Izquierda) --- */
-#filters-container {
-    padding: 25px;
-    background-color: #ffffff;
-    border-right: 1px solid #dee2e6;
+.filters {
+    width: 250px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     overflow-y: auto;
-    height: 100vh;
-    box-sizing: border-box;
 }
 
-#filters-container h2 {
-    margin-top: 0;
-    color: #005a9c;
+.filters h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
 }
 
-/* FIX 1: Estilos para los menús desplegables */
-details.filter-group {
-    margin-bottom: 12px;
-    border-left-width: 5px;
-    border-left-style: solid;
+.filter-group {
+    margin-bottom: 15px;
+    border: 2px solid; /* Borde para el color diferenciado */
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.filter-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    cursor: pointer;
+    color: #555;
+}
+
+.dropdown-content {
+    display: none;
+    flex-direction: column;
     padding-left: 15px;
 }
 
-details.filter-group[open] summary {
-    margin-bottom: 12px;
-}
-
-summary {
-    font-weight: 600;
-    font-size: 1.1em;
+.dropdown-content label {
+    font-weight: normal;
+    margin-bottom: 5px;
     cursor: pointer;
-    list-style: none; /* Oculta el marcador por defecto */
-    padding: 4px 0;
 }
 
-summary::before {
-    content: '► '; /* Marcador personalizado para el estado cerrado */
-    font-size: 0.8em;
-    margin-right: 4px;
+.dropdown-content input[type="checkbox"] {
+    margin-right: 8px;
 }
 
-details[open] > summary::before {
-    content: '▼ '; /* Marcador para el estado abierto */
-}
-/* FIN FIX 1 */
-
-/* Colores de borde para cada campo */
-.filter-group.especie { border-color: #28a745; }
-.filter-group.tecnologia { border-color: #007bff; }
-.filter-group.lineas { border-color: #ffc107; }
-.filter-group.rol { border-color: #6f42c1; }
-.filter-group.institucion { border-color: #dc3545; }
-
-.filter-options label {
+/* Mostrar desplegable cuando el label está activo */
+.filter-group.active .dropdown-content {
     display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    cursor: pointer;
-    font-size: 0.95em;
-    color: #495057;
 }
 
-.filter-options input[type="checkbox"] {
-    margin-right: 10px;
-    width: 16px;
-    height: 16px;
-}
-
-/* --- Visualización de Red (Derecha) --- */
-#network-container {
+.network-container {
+    flex-grow: 1;
+    background-color: #e9e9e9;
     position: relative;
+}
+
+#network {
     width: 100%;
     height: 100%;
-    background-color: #f8f9fa; /* Color de fondo para el área de zoom */
-    cursor: grab; /* Indica que se puede mover la vista */
+    border: 1px solid #ccc;
+    background-color: #fff;
 }
 
-#network-container:active {
-    cursor: grabbing;
-}
-
-.link {
-    stroke-opacity: 0.6;
-    stroke-width: 2.5px;
-}
-
-.node circle {
-    stroke: #fff;
-    stroke-width: 2px;
-    cursor: pointer;
-    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
-}
-
-.node text {
-    pointer-events: none;
-    font-size: 12px;
-    font-weight: 500;
-    fill: #212529;
-    text-anchor: middle;
-    dy: -22px;
-    paint-order: stroke;
-    stroke: #ffffff;
-    stroke-width: 3px;
-}
-
-/* --- Tooltip (Ventana Emergente de Información) --- */
-#tooltip {
+.person-info-box {
     position: absolute;
-    display: none;
-    background-color: rgba(255, 255, 255, 0.98);
-    border: 1px solid #ced4da;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ccc;
+    padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 16px;
-    z-index: 10;
-    width: 320px;
-    pointer-events: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 100;
+    max-width: 300px;
+    word-wrap: break-word;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
-#tooltip h3 { margin: 0 0 12px 0; color: #005a9c; font-size: 1.25em; }
-#tooltip p { margin: 8px 0; font-size: 0.9em; }
-#tooltip strong { color: #495057; }
-#tooltip ul { list-style-type: none; padding-left: 0; margin: 8px 0 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
-#tooltip li { background-color: #e9ecef; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; }
+.person-info-box h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.person-info-box p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.person-info-box p strong {
+    color: #444;
+}
