@@ -1,0 +1,59 @@
+/* style.css */
+body {
+  display: flex;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+#sidebar {
+  width: 300px;
+  background: #f4f4f4;
+  padding: 10px;
+  overflow-y: auto;
+  border-right: 2px solid #ddd;
+  height: 100vh;
+}
+
+#network {
+  flex-grow: 1;
+  height: 100vh;
+}
+
+.campo {
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 2px solid gray;
+  border-radius: 8px;
+}
+
+.campo-Especie {
+  border-color: #e57373;
+}
+.campo-Tecnología {
+  border-color: #64b5f6;
+}
+.campo-Líneas {
+  border-color: #81c784;
+}
+.campo-Rol {
+  border-color: #ffd54f;
+}
+.campo-Institución {
+  border-color: #ba68c8;
+}
+
+#infoBox {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  max-width: 300px;
+}
+
+.hidden {
+  display: none;
+}
