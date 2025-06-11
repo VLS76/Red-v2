@@ -3,46 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizador de Red de Personas</title>
+    <title>Red de Colaboradores</title>
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 </head>
 <body>
     <div class="main-container">
-        <div id="filters-panel" class="panel">
+        <div id="filters-container">
             <h2>Filtros</h2>
-            <div id="filters-container"></div>
+            <p>Selecciona uno o más indicadores para ver las conexiones.</p>
         </div>
 
-        <div id="network-container" class="panel">
-            <div id="network"></div>
-            <div id="person-info-card" class="info-card" style="display: none;">
-                <button id="close-card-btn">X</button>
-                <h3 id="info-name"></h3>
-                <div id="info-details"></div>
-            </div>
-        </div>
-
-        <div id="crud-panel" class="panel">
-            <h2>Gestionar Personas</h2>
-            <form id="person-form">
-                <input type="hidden" id="person-id">
-                <label for="person-name">Nombre:</label>
-                <input type="text" id="person-name" required>
-
-                <div id="form-fields-container">
-                    </div>
-
-                <div class="crud-buttons">
-                    <button type="button" id="create-btn">Crear</button>
-                    <button type="button" id="update-btn">Modificar</button>
-                    <button type="button" id="delete-btn">Eliminar</button>
-                    <button type="button" id="clear-form-btn">Limpiar</button>
-                </div>
-            </form>
-        </div>
+        <div id="network-container"></div>
     </div>
 
+    <div id="tooltip" class="hidden"></div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
