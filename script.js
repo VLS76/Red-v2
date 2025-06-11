@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 arrows: 'to',
                                 dashes: true,
                                 color: { color: '#888', highlight: '#f04' },
-                                title: `Conexión por institución: ${institution}`
+                                title: 'Conexión por institución: ${institution}'
                             });
                         }
                     });
@@ -282,25 +282,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Comparar Especie
                 const sharedEspecie = p1.especie.filter(e => p2.especie.includes(e));
                 if (sharedEspecie.length > 0) {
-                    sharedConnections.push(`Especie: ${sharedEspecie.join(', ')}`);
+                    sharedConnections.push('Especie: ${sharedEspecie.join(', ')}');
                 }
                 // Comparar Tecnología
                 const sharedTecnologia = p1.tecnologia.filter(t => p2.tecnologia.includes(t));
                 if (sharedTecnologia.length > 0) {
-                    sharedConnections.push(`Tecnología: ${sharedTecnologia.join(', ')}`);
+                    sharedConnections.push('Tecnología: ${sharedTecnologia.join(', ')}');
                 }
                 // Comparar Líneas
                 const sharedLineas = p1.lineas.filter(l => p2.lineas.includes(l));
                 if (sharedLineas.length > 0) {
-                    sharedConnections.push(`Líneas: ${sharedLineas.join(', ')}`);
+                    sharedConnections.push('Líneas: ${sharedLineas.join(', ')}');
                 }
                 // Comparar Rol (solo si son el mismo rol)
                 if (p1.rol === p2.rol) {
-                    sharedConnections.push(`Rol: ${p1.rol}`);
+                    sharedConnections.push('Rol: ${p1.rol}');
                 }
                 // Comparar Institución
                 if (p1.institucion === p2.institucion) {
-                    sharedConnections.push(`Institución: ${p1.institucion}`);
+                    sharedConnections.push('Institución: ${p1.institucion}');
                 }
 
                 if (sharedConnections.length > 0) {
@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         from: p1.id,
                         to: p2.id,
                         color: { color: '#007BFF' }, // Color para conexiones de indicadores
-                        title: `Comparten: ${sharedConnections.join('; ')}`
+                        title: 'Comparten: ${sharedConnections.join('; ')}'
                     });
                 }
             }
