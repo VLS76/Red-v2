@@ -1,110 +1,59 @@
+/* style.css */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    min-height: 100vh;
-    background-color: #f4f4f4;
+  display: flex;
+  font-family: Arial, sans-serif;
+  margin: 0;
 }
 
-.container {
-    display: flex;
-    width: 100%;
-}
-
-.filters {
-    width: 250px;
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    overflow-y: auto;
-}
-
-.filters h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-}
-
-.filter-group {
-    margin-bottom: 15px;
-    border: 2px solid; /* Borde para el color diferenciado */
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-}
-
-.filter-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-    cursor: pointer;
-    color: #555;
-}
-
-.dropdown-content {
-    display: none;
-    flex-direction: column;
-    padding-left: 15px;
-}
-
-.dropdown-content label {
-    font-weight: normal;
-    margin-bottom: 5px;
-    cursor: pointer;
-}
-
-.dropdown-content input[type="checkbox"] {
-    margin-right: 8px;
-}
-
-/* Mostrar desplegable cuando el label está activo */
-.filter-group.active .dropdown-content {
-    display: flex;
-}
-
-.network-container {
-    flex-grow: 1;
-    background-color: #e9e9e9;
-    position: relative;
+#sidebar {
+  width: 300px;
+  background: #f4f4f4;
+  padding: 10px;
+  overflow-y: auto;
+  border-right: 2px solid #ddd;
+  height: 100vh;
 }
 
 #network {
-    width: 100%;
-    height: 100%;
-    border: 1px solid #ccc;
-    background-color: #fff;
+  flex-grow: 1;
+  height: 100vh;
 }
 
-.person-info-box {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.95);
-    border: 1px solid #ccc;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    display: none;
-    z-index: 100;
-    max-width: 300px;
-    word-wrap: break-word;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+.campo {
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 2px solid gray;
+  border-radius: 8px;
 }
 
-.person-info-box h3 {
-    margin-top: 0;
-    color: #333;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+.campo-Especie {
+  border-color: #e57373;
+}
+.campo-Tecnología {
+  border-color: #64b5f6;
+}
+.campo-Líneas {
+  border-color: #81c784;
+}
+.campo-Rol {
+  border-color: #ffd54f;
+}
+.campo-Institución {
+  border-color: #ba68c8;
 }
 
-.person-info-box p {
-    margin: 5px 0;
-    color: #666;
+#infoBox {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  max-width: 300px;
 }
 
-.person-info-box p strong {
-    color: #444;
+.hidden {
+  display: none;
 }
