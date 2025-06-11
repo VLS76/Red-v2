@@ -6,27 +6,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const filterConfig = {
         especie: {
             label: 'Especie',
-            color: '#4CAF50',
+            color: '#16a34a',
             indicators: ['Ovina', 'Caprina', 'Vacuna', 'Porcina', 'Avícola', 'Cunícula']
         },
         tecnologia: {
             label: 'Tecnología',
-            color: '#2196F3',
+            color: '#2563eb',
             indicators: ['Identificación y monitorización', 'Detección y medición', 'Biosensores', 'Posicionamiento y navegación', 'Automatización y robots', 'Análisis de imágenes', 'Ciencia de datos']
         },
         lineas: {
             label: 'Líneas de Estudio',
-            color: '#FFC107',
+            color: '#f59e0b',
             indicators: ['Salud animal', 'Optimización de recursos', 'Comportamiento animal', 'Monitoreo de emisiones', 'Reproducción y mejora genética']
         },
         rol: {
             label: 'Rol',
-            color: '#9C27B0',
+            color: '#9333ea',
             indicators: ['IP', 'Postdoc', 'Predoc', 'Técnico', 'Asesor científico']
         },
         institucion: {
             label: 'Institución',
-            color: '#E91E63',
+            color: '#db2777',
             indicators: ['CICYTEX', 'CSIC/INIA', 'IRTA', 'IUCA', 'NEIKER', 'UAB', 'UCO', 'UdL/Agrotecnio', 'UM', 'USAL', 'USC/Campus Terra', 'UPV']
         }
     };
@@ -80,34 +80,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- 3. CONFIGURACIÓN DE LA VISUALIZACIÓN D3.JS ---
 
+    const svgElement = document.querySelector("#network-container svg");
     const container = document.getElementById('network-container');
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    const svg = d3.select("#network-container").append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .on('click', () => tooltip.classed('hidden', true)); // Ocultar tooltip al hacer clic en el fondo
+    const svg = d3.select(svgElement)
+        .on('click', () => tooltip.style('display', 'none')); // Ocultar tooltip al hacer clic en el fondo
 
     const tooltip = d3.select("#tooltip");
 
     const simulation = d3.forceSimulation()
-        .force("link", d3.forceLink().id(d => d.id).distance(100))
-        .force("charge", d3.forceManyBody().strength(-400))
+        .force("link", d3.forceLink().id(d => d.id).distance(120).strength(0.5))
+        .force("charge", d3.forceManyBody().strength(-500))
         .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("collide", d3.forceCollide().radius(d => (d.rol === 'IP' ? 30 : 20) + 5));
+        .force("collide", d3.forceCollide().radius(d => (d.rol === 'IP' ? 25 : 15) + 5).strength(0.8));
 
-    let link = svg.append("g").attr("class", "links").selectAll("line");
-    let node = svg.append("g").attr("class", "nodes").selectAll("g");
+    let linkGroup = svg.append("g").attr("class", "links");
+    let nodeGroup = svg.append("g").attr("class", "nodes");
 
     function ticked() {
-        link
+        linkGroup.selectAll("line")
             .attr("x1", d => d.source.x)
             .attr("y1", d => d.source.y)
             .attr("x2", d => d.target.x)
             .attr("y2", d => d.target.y);
     
-        node
+        nodeGroup.selectAll(".node")
             .attr("transform", d => `translate(${d.x},${d.y})`);
     }
 
@@ -115,43 +114,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateVisualization() {
         // Obtener filtros seleccionados
-        const selectedFilters = Array.from(document.querySelectorAll('#filters-container input:checked'))
-            .map(input => ({ value: input.value, category: input.dataset.category }));
+        const selectedValues = Array.from(document.querySelectorAll('#filters-container input:checked'))
+            .map(input => input.value);
 
-        // Filtrar personas: se muestra si coincide con CUALQUIER filtro seleccionado
+        // Filtrar personas
         let filteredPersonas = personas;
-        if (selectedFilters.length > 0) {
-            const selectedValues = selectedFilters.map(f => f.value);
+        if (selectedValues.length > 0) {
             filteredPersonas = personas.filter(p => {
-                return p.rol === p.institucion || // Edge case for single values
-                       selectedValues.includes(p.rol) ||
-                       selectedValues.includes(p.institucion) ||
-                       p.especie.some(e => selectedValues.includes(e)) ||
-                       p.tecnologia.some(t => selectedValues.includes(t)) ||
-                       p.lineas.some(l => selectedValues.includes(l));
+                const personData = [p.rol, p.institucion, ...p.especie, ...p.tecnologia, ...p.lineas];
+                return personData.some(item => selectedValues.includes(item));
             });
         }
         
-        // Crear nodos y enlaces para la simulación
-        const nodes = filteredPersonas.map(p => ({...p})); // Copia para no mutar datos originales
+        const nodes = filteredPersonas.map(p => ({...p}));
         const links = createLinks(nodes);
 
-        // Actualizar los nodos en la visualización
-        node = node.data(nodes, d => d.id)
+        // Actualizar nodos
+        const node = nodeGroup.selectAll(".node")
+            .data(nodes, d => d.id)
             .join(
                 enter => {
                     const g = enter.append("g").attr("class", "node");
                     
                     g.append("circle")
-                        .attr("r", d => d.rol === 'IP' ? 25 : 15) // IPs más grandes
-                        .attr("fill", d => filterConfig.institucion.color) // Color por institución
+                        .attr("r", d => d.rol === 'IP' ? 25 : 15)
+                        .attr("fill", d => filterConfig.institucion.color)
                         .on("click", (event, d) => {
-                            event.stopPropagation(); // Evitar que el clic se propague al SVG
+                            event.stopPropagation();
                             showTooltip(event, d);
                         });
                     
-                    g.append("text")
-                        .text(d => d.nombre);
+                    g.append("text").text(d => d.nombre);
                     
                     g.call(drag(simulation));
                     return g;
@@ -161,15 +154,11 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         
         // Actualizar enlaces
-        link = link.data(links, d => `${d.source.id}-${d.target.id}`)
+        const link = linkGroup.selectAll("line")
+            .data(links, d => `${d.source.id}-${d.target.id}`)
             .join("line")
-            .attr("class", "link")
-            .attr("stroke", d => d.color)
-            .attr("stroke-opacity", 0.7)
-            .attr("stroke-width", 3);
+            .attr("stroke", d => d.color);
 
-
-        // Reiniciar la simulación con los nuevos datos
         simulation.nodes(nodes);
         simulation.force("link").links(links);
         simulation.on("tick", ticked);
@@ -180,30 +169,17 @@ document.addEventListener('DOMContentLoaded', function () {
     
     function createLinks(nodes) {
         const links = [];
-        const nodeIds = new Set(nodes.map(n => n.id));
-
         for (let i = 0; i < nodes.length; i++) {
             for (let j = i + 1; j < nodes.length; j++) {
                 const personA = nodes[i];
                 const personB = nodes[j];
-
-                // Comprobar si ambos nodos están en la vista actual
-                if (!nodeIds.has(personA.id) || !nodeIds.has(personB.id)) continue;
                 
                 let sharedCategory = null;
 
-                // Chequear por institución compartida
-                if (personA.institucion === personB.institucion) {
-                    sharedCategory = 'institucion';
-                }
-                // Chequear por otras categorías
-                else if (personA.especie.some(e => personB.especie.includes(e))) {
-                    sharedCategory = 'especie';
-                } else if (personA.tecnologia.some(t => personB.tecnologia.includes(t))) {
-                    sharedCategory = 'tecnologia';
-                } else if (personA.lineas.some(l => personB.lineas.includes(l))) {
-                    sharedCategory = 'lineas';
-                }
+                if (personA.institucion === personB.institucion) sharedCategory = 'institucion';
+                else if (personA.especie.some(e => personB.especie.includes(e))) sharedCategory = 'especie';
+                else if (personA.tecnologia.some(t => personB.tecnologia.includes(t))) sharedCategory = 'tecnologia';
+                else if (personA.lineas.some(l => personB.lineas.includes(l))) sharedCategory = 'lineas';
 
                 if (sharedCategory) {
                     links.push({
@@ -219,26 +195,21 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // --- 5. FUNCIONALIDADES ADICIONALES ---
 
-    // Lógica para arrastrar nodos
     function drag(simulation) {
         function dragstarted(event, d) {
             if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
+            d.fx = d.x; d.fy = d.y;
         }
         function dragged(event, d) {
-            d.fx = event.x;
-            d.fy = event.y;
+            d.fx = event.x; d.fy = event.y;
         }
         function dragended(event, d) {
             if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
+            d.fx = null; d.fy = null;
         }
         return d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended);
     }
 
-    // Lógica para el tooltip
     function showTooltip(event, d) {
         const content = `
             <h3>${d.nombre}</h3>
@@ -251,33 +222,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
         tooltip
             .html(content)
+            .style("display", "block")
             .style("left", (event.pageX + 15) + "px")
-            .style("top", (event.pageY - 28) + "px")
-            .classed("hidden", false);
+            .style("top", (event.pageY - 15) + "px");
     }
     
-    // Lógica para la agrupación satelital
     function applySatelliteLayout(nodes) {
         const institutionGroups = d3.group(nodes, d => d.institucion);
         
+        nodes.forEach(n => { n.fx = null; n.fy = null; });
+
         institutionGroups.forEach(group => {
             const ips = group.filter(p => p.rol === 'IP');
             const others = group.filter(p => p.rol !== 'IP');
 
             if (ips.length > 0 && others.length > 0) {
-                const ipCenter = ips[0]; // Usamos el primer IP como centro
-                ipCenter.fx = ipCenter.x; // Fijar la posición del IP
-                ipCenter.fy = ipCenter.y;
-
+                const ipCenter = ips[0];
+                
                 others.forEach((person, i) => {
                     const angle = (i / others.length) * 2 * Math.PI;
-                    const radius = 60; // Distancia del satélite al IP
+                    const radius = 70;
                     person.fx = ipCenter.x + radius * Math.cos(angle);
                     person.fy = ipCenter.y + radius * Math.sin(angle);
                 });
-            } else {
-                 // Liberar posiciones si la condición no se cumple
-                 group.forEach(p => { p.fx = null; p.fy = null; });
             }
         });
     }
