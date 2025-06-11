@@ -1,0 +1,169 @@
+/* Estilos Generales */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+.panel {
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+h2, h3 {
+    color: #0056b3;
+    border-bottom: 2px solid #f0f2f5;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+/* Panel de Filtros (Izquierda) */
+#filters-panel {
+    flex: 0 0 280px;
+}
+
+.filter-group {
+    margin-bottom: 15px;
+    border: 1px solid;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.filter-group summary {
+    font-weight: bold;
+    cursor: pointer;
+    padding: 5px;
+    color: #333;
+}
+
+.filter-group[data-category="Especie"] { border-color: #2a9d8f; }
+.filter-group[data-category="Dispositivos"] { border-color: #e9c46a; }
+.filter-group[data-category="Estudio"] { border-color: #f4a261; }
+.filter-group[data-category="Proyectos"] { border-color: #e76f51; }
+.filter-group[data-category="Status"] { border-color: #264653; }
+.filter-group[data-category="Institución"] { border-color: #8e7dbe; }
+
+.filter-options {
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-options label {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+}
+
+/* Panel de Red (Centro) */
+#network-container {
+    flex-grow: 1;
+    position: relative;
+    padding: 0;
+}
+
+#network {
+    width: 100%;
+    height: 100%;
+    background-color: #e9eef2;
+}
+
+/* Tarjeta de Información */
+.info-card {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-width: 300px;
+    z-index: 100;
+}
+.info-card h3 { margin-top: 0; color: #0056b3; }
+.info-card p { margin: 5px 0; }
+.info-card strong { color: #333; }
+#close-card-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    font-weight: bold;
+    color: #888;
+}
+
+/* Panel CRUD (Derecha) */
+#crud-panel {
+    flex: 0 0 320px;
+}
+
+#person-form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.9em;
+}
+
+#person-form input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 8px 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#form-fields-container > div {
+    margin-top: 15px;
+}
+
+#form-fields-container select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.crud-buttons {
+    margin-top: 25px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.crud-buttons button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+#create-btn { background-color: #28a745; }
+#create-btn:hover { background-color: #218838; }
+#update-btn { background-color: #007bff; }
+#update-btn:hover { background-color: #0069d9; }
+#delete-btn { background-color: #dc3545; }
+#delete-btn:hover { background-color: #c82333; }
+#clear-form-btn { background-color: #6c757d; }
+#clear-form-btn:hover { background-color: #5a6268; }
