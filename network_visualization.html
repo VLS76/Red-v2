@@ -3,685 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red de Personas - Visualización Interactiva</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <title>Visor de Red de Personas</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* --- Estructura General --- */
+        body, html {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            background-color: #f4f4f9;
         }
 
-        .container {
-            display: flex;
+        /* --- Panel de Filtros (Izquierda) --- */
+        #filters-container {
+            width: 280px;
             height: 100vh;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            width: 300px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px;
             overflow-y: auto;
-            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+            padding: 15px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            box-sizing: border-box;
         }
 
-        .field-group {
+        h2 {
+            font-size: 1.2em;
+            color: #333;
+            margin-top: 0;
+        }
+
+        .filter-group {
             margin-bottom: 20px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            border-left-width: 5px;
+            border-left-style: solid;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fafafa;
         }
 
-        .field-group:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .field-header {
-            padding: 15px;
-            cursor: pointer;
+        .filter-group summary {
             font-weight: bold;
-            color: white;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .field-header:hover {
-            filter: brightness(110%);
-        }
-
-        .field-header::after {
-            content: '▼';
-            position: absolute;
-            right: 15px;
-            transition: transform 0.3s ease;
-        }
-
-        .field-header.collapsed::after {
-            transform: rotate(-90deg);
-        }
-
-        .especie { background: linear-gradient(45deg, #FF6B6B, #FF8E8E); }
-        .dispositivo { background: linear-gradient(45deg, #4ECDC4, #45B7B8); }
-        .estudio { background: linear-gradient(45deg, #45B7D1, #6C5CE7); }
-        .proyecto { background: linear-gradient(45deg, #A8E6CF, #88D8A3); }
-        .status { background: linear-gradient(45deg, #FFD93D, #FF6B6B); }
-        .institucion { background: linear-gradient(45deg, #6C5CE7, #A8E6CF); }
-
-        .field-content {
-            background: white;
-            max-height: 200px;
-            overflow-y: auto;
-            transition: max-height 0.3s ease;
-        }
-
-        .field-content.collapsed {
-            max-height: 0;
-        }
-
-        .checkbox-item {
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            transition: background-color 0.2s ease;
-        }
-
-        .checkbox-item:hover {
-            background-color: #f8f9ff;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            margin-right: 10px;
-            transform: scale(1.2);
-        }
-
-        .visualization {
-            flex: 1;
-            position: relative;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .person-tooltip {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            pointer-events: none;
-            z-index: 1000;
-            max-width: 300px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-
-        .node {
             cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 5px;
+            color: #333;
         }
 
-        .node:hover {
-            filter: brightness(120%);
+        .filter-options {
+            padding-top: 10px;
         }
 
-        .node text {
-            font-size: 12px;
-            fill: white;
-            text-anchor: middle;
-            dominant-baseline: middle;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        .filter-options label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        
+        /* Colores de los bordes para cada campo */
+        #filters-container .filter-group:nth-of-type(1) { border-color: #4A90E2; } /* Especie */
+        #filters-container .filter-group:nth-of-type(2) { border-color: #F5A623; } /* Dispositivo */
+        #filters-container .filter-group:nth-of-type(3) { border-color: #50E3C2; } /* Estudio */
+        #filters-container .filter-group:nth-of-type(4) { border-color: #BD10E0; } /* Proyecto */
+        #filters-container .filter-group:nth-of-type(5) { border-color: #9013FE; } /* Status */
+        #filters-container .filter-group:nth-of-type(6) { border-color: #D0021B; } /* Institución */
+
+        /* --- Contenedor de la Red (Derecha) --- */
+        #network-container {
+            flex-grow: 1;
+            height: 100vh;
+            position: relative;
         }
 
-        .link {
-            stroke-width: 2;
-            opacity: 0.6;
-            transition: all 0.3s ease;
+        #mynetwork {
+            width: 100%;
+            height: 100%;
         }
-
-        .link:hover {
-            opacity: 1;
-            stroke-width: 3;
-        }
-
-        .legend {
+        
+        /* --- Tarjeta de Información de la Persona --- */
+        #person-card {
+            display: none; /* Oculta por defecto */
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
+            width: 300px;
+            background: white;
+            border: 1px solid #ccc;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            padding: 20px;
+            z-index: 100;
         }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
+        #person-card h3 {
+            margin-top: 0;
+            color: #D0021B; /* Color de Institución */
         }
-
-        .legend-color {
-            width: 20px;
-            height: 3px;
-            margin-right: 10px;
-            border-radius: 2px;
+        #person-card-content p {
+            margin: 10px 0;
         }
-
-        .stats {
+        #person-card-content strong {
+            color: #333;
+        }
+        #close-card {
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .clear-filters {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
+            top: 10px;
+            right: 15px;
             border: none;
-            border-radius: 8px;
+            background: none;
+            font-size: 1.5em;
             cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            color: #888;
         }
 
-        .clear-filters:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <h2 style="text-align: center; color: #333; margin-bottom: 30px;">Filtros de Búsqueda</h2>
-            
-            <div class="field-group">
-                <div class="field-header especie" onclick="toggleField('especie')">
-                    Especie
-                </div>
-                <div class="field-content" id="especie-content">
-                    <div class="checkbox-item"><input type="checkbox" id="ovina" onchange="updateVisualization()"> Ovina</div>
-                    <div class="checkbox-item"><input type="checkbox" id="caprina" onchange="updateVisualization()"> Caprina</div>
-                    <div class="checkbox-item"><input type="checkbox" id="vacuna" onchange="updateVisualization()"> Vacuna</div>
-                    <div class="checkbox-item"><input type="checkbox" id="porcina" onchange="updateVisualization()"> Porcina</div>
-                    <div class="checkbox-item"><input type="checkbox" id="avicola" onchange="updateVisualization()"> Avícola</div>
-                    <div class="checkbox-item"><input type="checkbox" id="cunicula" onchange="updateVisualization()"> Cunícola</div>
-                </div>
-            </div>
 
-            <div class="field-group">
-                <div class="field-header dispositivo" onclick="toggleField('dispositivo')">
-                    Dispositivos
-                </div>
-                <div class="field-content" id="dispositivo-content">
-                    <div class="checkbox-item"><input type="checkbox" id="drones" onchange="updateVisualization()"> Drones</div>
-                    <div class="checkbox-item"><input type="checkbox" id="rfid" onchange="updateVisualization()"> RFID</div>
-                    <div class="checkbox-item"><input type="checkbox" id="collares" onchange="updateVisualization()"> Collares</div>
-                    <div class="checkbox-item"><input type="checkbox" id="camaras" onchange="updateVisualization()"> Cámaras de visión</div>
-                    <div class="checkbox-item"><input type="checkbox" id="ia" onchange="updateVisualization()"> IA</div>
-                    <div class="checkbox-item"><input type="checkbox" id="alimentadores" onchange="updateVisualization()"> Alimentadores automáticos</div>
-                    <div class="checkbox-item"><input type="checkbox" id="basculas" onchange="updateVisualization()"> Básculas</div>
-                    <div class="checkbox-item"><input type="checkbox" id="acusticos" onchange="updateVisualization()"> Sensores acústicos</div>
-                    <div class="checkbox-item"><input type="checkbox" id="movimiento" onchange="updateVisualization()"> Sensores de movimiento</div>
-                    <div class="checkbox-item"><input type="checkbox" id="vallados" onchange="updateVisualization()"> Vallados virtuales</div>
-                </div>
-            </div>
+    <div id="filters-container">
+        <h2>Filtros</h2>
+    </div>
 
-            <div class="field-group">
-                <div class="field-header estudio" onclick="toggleField('estudio')">
-                    Estudio
-                </div>
-                <div class="field-content" id="estudio-content">
-                    <div class="checkbox-item"><input type="checkbox" id="alimenticio" onchange="updateVisualization()"> Comportamiento alimenticio</div>
-                    <div class="checkbox-item"><input type="checkbox" id="social" onchange="updateVisualization()"> Comportamiento social</div>
-                    <div class="checkbox-item"><input type="checkbox" id="manejo" onchange="updateVisualization()"> Manejo</div>
-                    <div class="checkbox-item"><input type="checkbox" id="nutricion" onchange="updateVisualization()"> Nutrición</div>
-                    <div class="checkbox-item"><input type="checkbox" id="salud" onchange="updateVisualization()"> Salud</div>
-                </div>
-            </div>
-
-            <div class="field-group">
-                <div class="field-header proyecto" onclick="toggleField('proyecto')">
-                    Proyectos
-                </div>
-                <div class="field-content" id="proyecto-content">
-                    <div class="checkbox-item"><input type="checkbox" id="project1" onchange="updateVisualization()"> Project1</div>
-                    <div class="checkbox-item"><input type="checkbox" id="project2" onchange="updateVisualization()"> Project2</div>
-                    <div class="checkbox-item"><input type="checkbox" id="project3" onchange="updateVisualization()"> Project3</div>
-                    <div class="checkbox-item"><input type="checkbox" id="project4" onchange="updateVisualization()"> Project4</div>
-                </div>
-            </div>
-
-            <div class="field-group">
-                <div class="field-header status" onclick="toggleField('status')">
-                    Status
-                </div>
-                <div class="field-content" id="status-content">
-                    <div class="checkbox-item"><input type="checkbox" id="ip" onchange="updateVisualization()"> IP</div>
-                    <div class="checkbox-item"><input type="checkbox" id="predoc" onchange="updateVisualization()"> Predoc</div>
-                    <div class="checkbox-item"><input type="checkbox" id="postdoc" onchange="updateVisualization()"> Postdoc</div>
-                    <div class="checkbox-item"><input type="checkbox" id="tecnico" onchange="updateVisualization()"> Técnico</div>
-                </div>
-            </div>
-
-            <div class="field-group">
-                <div class="field-header institucion" onclick="toggleField('institucion')">
-                    Institución
-                </div>
-                <div class="field-content" id="institucion-content">
-                    <div class="checkbox-item"><input type="checkbox" id="upv" onchange="updateVisualization()"> UPV</div>
-                    <div class="checkbox-item"><input type="checkbox" id="udl" onchange="updateVisualization()"> UdL</div>
-                    <div class="checkbox-item"><input type="checkbox" id="uco" onchange="updateVisualization()"> UCO</div>
-                    <div class="checkbox-item"><input type="checkbox" id="usal" onchange="updateVisualization()"> USAL</div>
-                    <div class="checkbox-item"><input type="checkbox" id="uab" onchange="updateVisualization()"> UAB</div>
-                </div>
-            </div>
-
-            <button class="clear-filters" onclick="clearAllFilters()">Limpiar Filtros</button>
-        </div>
-
-        <div class="visualization">
-            <svg id="network"></svg>
-            <div class="legend">
-                <h4 style="margin-top: 0;">Tipos de Conexión</h4>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #FF6B6B;"></div>
-                    <span>Especie</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #4ECDC4;"></div>
-                    <span>Dispositivo</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #45B7D1;"></div>
-                    <span>Estudio</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #A8E6CF;"></div>
-                    <span>Proyecto</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #FFD93D;"></div>
-                    <span>Status</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #6C5CE7;"></div>
-                    <span>Institución</span>
-                </div>
-            </div>
-            <div class="stats">
-                <div id="stats-content">
-                    <strong>Personas mostradas:</strong> <span id="person-count">0</span><br>
-                    <strong>Conexiones:</strong> <span id="connection-count">0</span>
-                </div>
-            </div>
+    <div id="network-container">
+        <div id="mynetwork"></div>
+        <div id="person-card">
+             <button id="close-card">&times;</button>
+             <h3 id="person-card-name"></h3>
+             <div id="person-card-content"></div>
         </div>
     </div>
 
-    <div class="person-tooltip" id="tooltip" style="display: none;"></div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    // --- BASE DE DATOS DE EJEMPLO (15 PERSONAS) ---
+    const peopleData = [
+        { name: "Ana Torres", institution: "UPV", status: "IP", species: ["Ovina", "Caprina"], devices: ["RFID", "Collares"], studies: ["Comportamiento social"], projects: ["Project1"] },
+        { name: "Beatriz Ruiz", institution: "UPV", status: "Postdoc", species: ["Ovina"], devices: ["Collares", "Cámaras de visión"], studies: ["Manejo"], projects: ["Project1", "Project3"] },
+        { name: "Carlos Sanz", institution: "UPV", status: "Predoc", species: ["Caprina"], devices: ["RFID", "Sensores de movimiento"], studies: ["Comportamiento alimenticio"], projects: ["Project1"] },
+        { name: "David Gil", institution: "UdL", status: "IP", species: ["Porcina", "Avícola"], devices: ["Alimentadores automáticos", "IA", "Básculas"], studies: ["Nutrición"], projects: ["Project2"] },
+        { name: "Elena Vidal", institution: "UdL", status: "Técnico", species: ["Porcina"], devices: ["Básculas", "Sensores acústicos"], studies: ["Salud"], projects: ["Project2", "Project4"] },
+        { name: "Felipe Mora", institution: "UCO", status: "IP", species: ["Vacuna"], devices: ["Drones", "Vallados virtuales", "Collares"], studies: ["Manejo"], projects: ["Project3"] },
+        { name: "Gloria Pons", institution: "UCO", status: "Postdoc", species: ["Vacuna", "Ovina"], devices: ["Drones", "RFID"], studies: ["Comportamiento social"], projects: ["Project3"] },
+        { name: "Hector Luna", institution: "USAL", status: "IP", species: ["Cunícula"], devices: ["Cámaras de visión", "Sensores de movimiento"], studies: ["Comportamiento alimenticio"], projects: ["Project4"] },
+        { name: "Irene Soler", institution: "UAB", status: "IP", species: ["Avícola"], devices: ["IA", "Alimentadores automáticos"], studies: ["Nutrición", "Salud"], projects: ["Project2"] },
+        { name: "Javier Peña", institution: "UAB", status: "Predoc", species: ["Avícola"], devices: ["IA", "Sensores acústicos"], studies: ["Salud"], projects: ["Project2"] },
+        { name: "Laura Camps", institution: "UdL", status: "Postdoc", species: ["Porcina"], devices: ["IA", "Básculas"], studies: ["Nutrición"], projects: ["Project2", "Project4"] },
+        { name: "Marcos Roca", institution: "UPV", status: "Técnico", species: ["Ovina"], devices: ["RFID"], studies: ["Manejo"], projects: ["Project1"] },
+        { name: "Nuria Blasco", institution: "UCO", status: "Predoc", species: ["Vacuna"], devices: ["Collares"], studies: ["Manejo", "Comportamiento social"], projects: ["Project3"] },
+        { name: "Oscar Romero", institution: "USAL", status: "Postdoc", species: ["Cunícula", "Porcina"], devices: ["Cámaras de visión", "IA"], studies: ["Comportamiento alimenticio", "Salud"], projects: ["Project4"] },
+        { name: "Pilar Fuster", institution: "UAB", status: "IP", species: ["Caprina", "Ovina"], devices: ["RFID", "Drones"], studies: ["Comportamiento social", "Manejo"], projects: ["Project1", "Project3"] }
+    ];
 
-    <script>
-        // Datos de ejemplo
-        const people = [
-            {
-                id: 1, name: "Ana García", especie: ["ovina", "caprina"], dispositivo: ["drones", "rfid"], 
-                estudio: ["alimenticio", "social"], proyecto: ["project1"], status: ["ip"], institucion: ["upv"]
-            },
-            {
-                id: 2, name: "Carlos López", especie: ["vacuna"], dispositivo: ["collares", "basculas"], 
-                estudio: ["manejo", "nutricion"], proyecto: ["project1", "project2"], status: ["postdoc"], institucion: ["upv"]
-            },
-            {
-                id: 3, name: "María Rodríguez", especie: ["porcina", "avicola"], dispositivo: ["ia", "camaras"], 
-                estudio: ["salud"], proyecto: ["project2"], status: ["predoc"], institucion: ["udl"]
-            },
-            {
-                id: 4, name: "José Martín", especie: ["cunicula"], dispositivo: ["alimentadores", "acusticos"], 
-                estudio: ["alimenticio"], proyecto: ["project3"], status: ["ip"], institucion: ["udl"]
-            },
-            {
-                id: 5, name: "Laura Sánchez", especie: ["ovina", "vacuna"], dispositivo: ["movimiento", "vallados"], 
-                estudio: ["social", "manejo"], proyecto: ["project1", "project3"], status: ["tecnico"], institucion: ["udl"]
-            },
-            {
-                id: 6, name: "David Fernández", especie: ["caprina", "porcina"], dispositivo: ["drones", "ia"], 
-                estudio: ["nutricion", "salud"], proyecto: ["project4"], status: ["postdoc"], institucion: ["uco"]
-            },
-            {
-                id: 7, name: "Elena Jiménez", especie: ["avicola"], dispositivo: ["rfid", "collares"], 
-                estudio: ["alimenticio", "manejo"], proyecto: ["project2", "project4"], status: ["ip"], institucion: ["uco"]
-            },
-            {
-                id: 8, name: "Miguel Torres", especie: ["vacuna", "cunicula"], dispositivo: ["basculas", "camaras"], 
-                estudio: ["social"], proyecto: ["project1"], status: ["predoc"], institucion: ["uco"]
-            },
-            {
-                id: 9, name: "Isabel Ruiz", especie: ["ovina", "porcina"], dispositivo: ["alimentadores", "movimiento"], 
-                estudio: ["salud", "nutricion"], proyecto: ["project3", "project4"], status: ["tecnico"], institucion: ["usal"]
-            },
-            {
-                id: 10, name: "Andrés Moreno", especie: ["caprina", "avicola"], dispositivo: ["acusticos", "vallados"], 
-                estudio: ["alimenticio"], proyecto: ["project2"], status: ["ip"], institucion: ["usal"]
-            },
-            {
-                id: 11, name: "Carmen Díaz", especie: ["cunicula", "ovina"], dispositivo: ["drones", "basculas"], 
-                estudio: ["social", "manejo"], proyecto: ["project1", "project4"], status: ["postdoc"], institucion: ["usal"]
-            },
-            {
-                id: 12, name: "Roberto Herrera", especie: ["vacuna"], dispositivo: ["ia", "rfid"], 
-                estudio: ["salud"], proyecto: ["project3"], status: ["predoc"], institucion: ["uab"]
-            },
-            {
-                id: 13, name: "Lucía Vega", especie: ["porcina", "caprina"], dispositivo: ["collares", "alimentadores"], 
-                estudio: ["nutricion", "alimenticio"], proyecto: ["project2", "project3"], status: ["ip"], institucion: ["uab"]
-            },
-            {
-                id: 14, name: "Francisco Castro", especie: ["avicola", "cunicula"], dispositivo: ["camaras", "acusticos"], 
-                estudio: ["manejo", "social"], proyecto: ["project4"], status: ["tecnico"], institucion: ["uab"]
-            },
-            {
-                id: 15, name: "Patricia Ramos", especie: ["ovina", "vacuna"], dispositivo: ["movimiento", "vallados"], 
-                estudio: ["salud", "alimenticio"], proyecto: ["project1", "project2"], status: ["postdoc"], institucion: ["uab"]
-            }
-        ];
-
-        const colorMap = {
-            especie: "#FF6B6B",
-            dispositivo: "#4ECDC4", 
-            estudio: "#45B7D1",
-            proyecto: "#A8E6CF",
-            status: "#FFD93D",
-            institucion: "#6C5CE7"
-        };
-
-        let simulation;
-        const svg = d3.select("#network");
-        const tooltip = d3.select("#tooltip");
-
-        function toggleField(fieldName) {
-            const content = document.getElementById(fieldName + '-content');
-            const header = content.previousElementSibling;
+    // --- CONFIGURACIÓN DE LOS FILTROS ---
+    const filtersConfig = {
+        'Especie': ['Ovina', 'Caprina', 'Vacuna', 'Porcina', 'Avícola', 'Cunícula'],
+        'Dispositivo': ['Drones', 'RFID', 'Collares', 'Cámaras de visión', 'IA', 'Alimentadores automáticos', 'Básculas', 'Sensores acústicos', 'Sensores de movimiento', 'Vallados virtuales'],
+        'Estudio': ['Comportamiento alimenticio', 'Comportamiento social', 'Manejo', 'Nutrición', 'Salud'],
+        'Proyecto': ['Project1', 'Project2', 'Project3', 'Project4'],
+        'Status': ['IP', 'Predoc', 'Postdoc', 'Técnico'],
+        'Institución': ['UPV', 'UdL', 'UCO', 'USAL', 'UAB']
+    };
+    
+    // --- INICIALIZACIÓN DE LA APLICACIÓN ---
+    const filtersContainer = document.getElementById('filters-container');
+    const networkContainer = document.getElementById('mynetwork');
+    const personCard = document.getElementById('person-card');
+    const personCardName = document.getElementById('person-card-name');
+    const personCardContent = document.getElementById('person-card-content');
+    const closeCardButton = document.getElementById('close-card');
+    
+    let network = null;
+    
+    // 1. Crear los filtros dinámicamente
+    function createFilters() {
+        for (const groupName in filtersConfig) {
+            const groupDiv = document.createElement('details');
+            groupDiv.className = 'filter-group';
+            groupDiv.open = true; // Empiezan abiertos
             
-            if (content.classList.contains('collapsed')) {
-                content.classList.remove('collapsed');
-                header.classList.remove('collapsed');
-            } else {
-                content.classList.add('collapsed');
-                header.classList.add('collapsed');
-            }
-        }
+            const summary = document.createElement('summary');
+            summary.textContent = groupName;
+            groupDiv.appendChild(summary);
 
-        function getSelectedFilters() {
-            const filters = {};
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'filter-options';
             
-            checkboxes.forEach(checkbox => {
-                const field = getFieldFromId(checkbox.id);
-                if (!filters[field]) filters[field] = [];
-                filters[field].push(checkbox.id);
+            filtersConfig[groupName].forEach(option => {
+                const label = document.createElement('label');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = option;
+                checkbox.dataset.group = groupName.toLowerCase(); // ej: data-group="especie"
+                label.appendChild(checkbox);
+                label.append(` ${option}`);
+                optionsDiv.appendChild(label);
             });
-            
-            return filters;
+            groupDiv.appendChild(optionsDiv);
+            filtersContainer.appendChild(groupDiv);
         }
+    }
 
-        function getFieldFromId(id) {
-            const fieldMapping = {
-                'ovina': 'especie', 'caprina': 'especie', 'vacuna': 'especie', 'porcina': 'especie', 'avicola': 'especie', 'cunicula': 'especie',
-                'drones': 'dispositivo', 'rfid': 'dispositivo', 'collares': 'dispositivo', 'camaras': 'dispositivo', 'ia': 'dispositivo', 
-                'alimentadores': 'dispositivo', 'basculas': 'dispositivo', 'acusticos': 'dispositivo', 'movimiento': 'dispositivo', 'vallados': 'dispositivo',
-                'alimenticio': 'estudio', 'social': 'estudio', 'manejo': 'estudio', 'nutricion': 'estudio', 'salud': 'estudio',
-                'project1': 'proyecto', 'project2': 'proyecto', 'project3': 'proyecto', 'project4': 'proyecto',
-                'ip': 'status', 'predoc': 'status', 'postdoc': 'status', 'tecnico': 'status',
-                'upv': 'institucion', 'udl': 'institucion', 'uco': 'institucion', 'usal': 'institucion', 'uab': 'institucion'
-            };
-            return fieldMapping[id];
-        }
+    // 2. Función principal para actualizar la red
+    function updateNetwork() {
+        const selectedFilters = Array.from(document.querySelectorAll('#filters-container input:checked')).map(cb => ({
+             value: cb.value,
+             group: cb.dataset.group
+        }));
 
-        function filterPeople(filters) {
-            if (Object.keys(filters).length === 0) return people;
-            
-            return people.filter(person => {
-                return Object.keys(filters).some(field => {
-                    return filters[field].some(value => person[field].includes(value));
-                });
-            });
-        }
-
-        function createConnections(filteredPeople) {
-            const connections = [];
-            const connectionTypes = new Set();
-            
-            for (let i = 0; i < filteredPeople.length; i++) {
-                for (let j = i + 1; j < filteredPeople.length; j++) {
-                    const person1 = filteredPeople[i];
-                    const person2 = filteredPeople[j];
-                    const commonFields = [];
-                    
-                    ['especie', 'dispositivo', 'estudio', 'proyecto', 'status', 'institucion'].forEach(field => {
-                        const common = person1[field].filter(x => person2[field].includes(x));
-                        if (common.length > 0) {
-                            commonFields.push({field, common});
-                        }
-                    });
-                    
-                    if (commonFields.length > 0) {
-                        const primaryConnection = commonFields[0];
-                        connections.push({
-                            source: person1,
-                            target: person2,
-                            type: primaryConnection.field,
-                            commonFields: commonFields
-                        });
-                        connectionTypes.add(primaryConnection.field);
-                    }
-                }
-            }
-            
-            return connections;
-        }
-
-        function getNodeSize(person, filteredPeople) {
-            const sameInstitution = filteredPeople.filter(p => 
-                p.institucion.some(inst => person.institucion.includes(inst))
+        // Filtrar personas: deben coincidir con AL MENOS UNO de los filtros seleccionados
+        let filteredPeople;
+        if (selectedFilters.length === 0) {
+            filteredPeople = []; // No mostrar nada si no hay filtros, o mostrar todos: peopleData
+        } else {
+            const selectedValues = new Set(selectedFilters.map(f => f.value));
+            filteredPeople = peopleData.filter(person => 
+                person.species.some(s => selectedValues.has(s)) ||
+                person.devices.some(d => selectedValues.has(d)) ||
+                person.studies.some(st => selectedValues.has(st)) ||
+                person.projects.some(p => selectedValues.has(p)) ||
+                selectedValues.has(person.status) ||
+                selectedValues.has(person.institution)
             );
-            
-            const hasIP = sameInstitution.some(p => p.status.includes('ip'));
-            
-            if (person.status.includes('ip')) {
-                return hasIP ? 25 : 20;
-            } else if (hasIP) {
-                return 15;
-            } else {
-                return 20;
-            }
         }
 
-        function positionSatellites(nodes, links) {
-            const institutionGroups = {};
-            
-            nodes.forEach(node => {
-                node.institucion.forEach(inst => {
-                    if (!institutionGroups[inst]) institutionGroups[inst] = [];
-                    institutionGroups[inst].push(node);
-                });
-            });
-            
-            Object.values(institutionGroups).forEach(group => {
-                const ips = group.filter(p => p.status.includes('ip'));
-                const nonIps = group.filter(p => !p.status.includes('ip'));
-                
-                if (ips.length > 0 && nonIps.length > 0) {
-                    ips.forEach(ip => {
-                        const satelliteRadius = 80;
-                        const angleStep = (2 * Math.PI) / nonIps.length;
-                        
-                        nonIps.forEach((satellite, index) => {
-                            const angle = index * angleStep;
-                            satellite.fx = ip.x + Math.cos(angle) * satelliteRadius;
-                            satellite.fy = ip.y + Math.sin(angle) * satelliteRadius;
-                        });
-                    });
-                }
-            });
-        }
-
-        function updateVisualization() {
-            const filters = getSelectedFilters();
-            const filteredPeople = filterPeople(filters);
-            const connections = createConnections(filteredPeople);
-            
-            // Actualizar estadísticas
-            document.getElementById('person-count').textContent = filteredPeople.length;
-            document.getElementById('connection-count').textContent = connections.length;
-            
-            const width = document.querySelector('.visualization').clientWidth;
-            const height = document.querySelector('.visualization').clientHeight;
-            
-            svg.selectAll("*").remove();
-            svg.attr("width", width).attr("height", height);
-            
-            if (filteredPeople.length === 0) return;
-            
-            // Crear simulación
-            simulation = d3.forceSimulation(filteredPeople)
-                .force("link", d3.forceLink(connections).id(d => d.id).distance(100))
-                .force("charge", d3.forceManyBody().strength(-300))
-                .force("center", d3.forceCenter(width / 2, height / 2))
-                .force("collision", d3.forceCollide().radius(d => getNodeSize(d, filteredPeople) + 5));
-            
-            // Crear enlaces
-            const link = svg.append("g")
-                .selectAll("line")
-                .data(connections)
-                .enter().append("line")
-                .attr("class", "link")
-                .style("stroke", d => colorMap[d.type])
-                .style("stroke-width", 2)
-                .style("opacity", 0.6);
-            
-            // Crear nodos
-            const node = svg.append("g")
-                .selectAll("g")
-                .data(filteredPeople)
-                .enter().append("g")
-                .attr("class", "node")
-                .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended));
-            
-            // Círculos de nodos
-            node.append("circle")
-                .attr("r", d => getNodeSize(d, filteredPeople))
-                .style("fill", d => {
-                    const gradient = svg.append("defs").append("radialGradient")
-                        .attr("id", `grad${d.id}`)
-                        .attr("cx", "30%").attr("cy", "30%");
-                    
-                    gradient.append("stop").attr("offset", "0%").style("stop-color", "#fff").style("stop-opacity", 0.3);
-                    gradient.append("stop").attr("offset", "100%").style("stop-color", colorMap[d.institucion[0]]).style("stop-opacity", 1);
-                    
-                    return `url(#grad${d.id})`;
-                })
-                .style("stroke", d => d.status.includes('ip') ? "#FFD700" : "#fff")
-                .style("stroke-width", d => d.status.includes('ip') ? 3 : 2);
-            
-            // Texto de nodos
-            node.append("text")
-                .text(d => d.name.split(' ')[0])
-                .style("font-size", "12px")
-                .style("fill", "white")
-                .style("text-anchor", "middle")
-                .style("dominant-baseline", "middle")
-                .style("font-weight", "bold")
-                .style("text-shadow", "1px 1px 2px rgba(0,0,0,0.7)");
-            
-            // Eventos del mouse
-            node.on("click", function(event, d) {
-                showTooltip(event, d);
-            }).on("mouseover", function(event, d) {
-                d3.select(this).select("circle").style("filter", "brightness(120%)");
-            }).on("mouseout", function(event, d) {
-                d3.select(this).select("circle").style("filter", "brightness(100%)");
-            });
-            
-            // Actualizar posiciones en cada tick
-            simulation.on("tick", () => {
-                link.attr("x1", d => d.source.x)
-                    .attr("y1", d => d.source.y)
-                    .attr("x2", d => d.target.x)
-                    .attr("y2", d => d.target.y);
-                
-                node.attr("transform", d => `translate(${d.x},${d.y})`);
-            });
-        }
-
-        function showTooltip(event, person) {
-            const tooltip = document.getElementById('tooltip');
-            let content = `<strong>${person.name}</strong><br><br>`;
-            
-            content += `<strong>Especie:</strong> ${person.especie.join(', ')}<br>`;
-            content += `<strong>Dispositivos:</strong> ${person.dispositivo.join(', ')}<br>`;
-            content += `<strong>Estudios:</strong> ${person.estudio.join(', ')}<br>`;
-            content += `<strong>Proyectos:</strong> ${person.proyecto.join(', ')}<br>`;
-            content += `<strong>Status:</strong> ${person.status.join(', ')}<br>`;
-            content += `<strong>Institución:</strong> ${person.institucion.join(', ')}`;
-            
-            tooltip.innerHTML = content;
-            tooltip.style.display = 'block';
-            tooltip.style.left = (event.pageX + 10) + 'px';
-            tooltip.style.top = (event.pageY - 10) + 'px';
-            
-            // Ocultar tooltip después de 5 segundos
-            setTimeout(() => {
-                tooltip.style.display = 'none';
-            }, 5000);
-        }
-
-        function dragstarted(event, d) {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-        }
-
-        function dragged(event, d) {
-            d.fx = event.x;
-            d.fy = event.y;
-        }
-
-        function dragended(event, d) {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-        }
-
-        function clearAllFilters() {
-            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            updateVisualization();
-        }
-
-        // Ocultar tooltip al hacer clic fuera
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.node')) {
-                document.getElementById('tooltip').style.display = 'none';
+        // Crear Nodos (Personas)
+        const institutionIPs = {}; // Rastrear IPs por institución para el tamaño
+        filteredPeople.forEach(p => {
+            if (p.status === 'IP') {
+                if (!institutionIPs[p.institution]) institutionIPs[p.institution] = [];
+                institutionIPs[p.institution].push(p.name);
             }
         });
 
-        // Inicializar la visualización
-        window.addEventListener('resize', updateVisualization);
-        updateVisualization();
-    </script>
+        const nodes = new vis.DataSet(filteredPeople.map(person => {
+            let size = 25; // Tamaño por defecto
+            // Regla especial: si hay un IP en la misma institución, los no-IP son más pequeños
+            if (person.status !== 'IP' && institutionIPs[person.institution]) {
+                size = 15; // Tamaño reducido "satelital"
+            }
+            return {
+                id: person.name,
+                label: person.name,
+                title: `${person.name} (${person.institution} - ${person.status})`,
+                size: size,
+                group: person.institution // Agrupa visualmente por institución
+            };
+        }));
+
+        // Crear Conexiones (Edges)
+        const edges = new vis.DataSet();
+        const createdEdges = new Set(); // Para evitar duplicados (A-B y B-A)
+
+        // Comparamos cada persona con todas las demás
+        for (let i = 0; i < filteredPeople.length; i++) {
+            for (let j = i + 1; j < filteredPeople.length; j++) {
+                const personA = filteredPeople[i];
+                const personB = filteredPeople[j];
+
+                // Buscar indicadores comunes basados en los filtros seleccionados
+                const commonIndicators = [];
+                selectedFilters.forEach(filter => {
+                    const checkProperty = (obj, prop, value) => {
+                         if (Array.isArray(obj[prop])) return obj[prop].includes(value);
+                         return obj[prop] === value;
+                    };
+                    
+                    const pA_props = { species: personA.species, dispositivo: personA.devices, estudio: personA.studies, proyecto: personA.projects, status: personA.status, institución: personA.institution };
+                    const pB_props = { species: personB.species, dispositivo: personB.devices, estudio: personB.studies, proyecto: personB.projects, status: personB.status, institución: personB.institution };
+
+                    if (checkProperty(pA_props, filter.group, filter.value) && checkProperty(pB_props, filter.group, filter.value)) {
+                       commonIndicators.push(filter.value);
+                    }
+                });
+
+                if (commonIndicators.length > 0) {
+                    const edgeId = [personA.name, personB.name].sort().join('-');
+                    if (!createdEdges.has(edgeId)) {
+                        edges.add({
+                            from: personA.name,
+                            to: personB.name,
+                            // Etiqueta para saber el tipo de conexión
+                            title: `Conexión por: ${commonIndicators.join(', ')}`,
+                            label: `🔗` // Un emoji simple o `...`
+                        });
+                        createdEdges.add(edgeId);
+                    }
+                }
+            }
+        }
+        
+        // Renderizar la red
+        const data = { nodes: nodes, edges: edges };
+        const options = {
+            nodes: {
+                shape: 'dot',
+                font: { size: 14, color: '#333' },
+                borderWidth: 2
+            },
+            edges: {
+                width: 1,
+                color: { inherit: 'from' },
+                smooth: { type: 'continuous' }
+            },
+            physics: {
+                forceAtlas2Based: {
+                    gravitationalConstant: -50,
+                    centralGravity: 0.01,
+                    springLength: 230,
+                    springConstant: 0.08
+                },
+                minVelocity: 0.75,
+                solver: 'forceAtlas2Based'
+            },
+            interaction: {
+                tooltipDelay: 200,
+                hideEdgesOnDrag: true
+            },
+            // Agrupar visualmente por institución con colores
+            groups: {
+              UPV: { color: { background:'#4A90E2', border:'#3B73B4' }, borderWidth: 3 },
+              UdL: { color: { background:'#F5A623', border:'#C4851C' } },
+              UCO: { color: { background:'#50E3C2', border:'#40B59B' } },
+              USAL: { color: { background:'#BD10E0', border:'#970DB2' } },
+              UAB: { color: { background:'#9013FE', border:'#730FCB' } }
+            }
+        };
+
+        if (!network) {
+            network = new vis.Network(networkContainer, data, options);
+            // Evento de clic en un nodo
+            network.on("click", function (params) {
+                if (params.nodes.length > 0) {
+                    const nodeId = params.nodes[0];
+                    showPersonCard(nodeId);
+                } else {
+                    hidePersonCard(); // Ocultar si se hace clic en el fondo
+                }
+            });
+        } else {
+            network.setData(data);
+        }
+    }
+    
+    // 3. Mostrar/ocultar tarjeta de detalles
+    function showPersonCard(personName) {
+        const person = peopleData.find(p => p.name === personName);
+        if (person) {
+            personCardName.textContent = person.name;
+            personCardContent.innerHTML = `
+                <p><strong>Institución:</strong> ${person.institution}</p>
+                <p><strong>Status:</strong> ${person.status}</p>
+                <p><strong>Especies:</strong> ${person.species.join(', ')}</p>
+                <p><strong>Dispositivos:</strong> ${person.devices.join(', ')}</p>
+                <p><strong>Estudios:</strong> ${person.studies.join(', ')}</p>
+                <p><strong>Proyectos:</strong> ${person.projects.join(', ')}</p>
+            `;
+            personCard.style.display = 'block';
+        }
+    }
+
+    function hidePersonCard() {
+        personCard.style.display = 'none';
+    }
+
+    // --- Arranque de la Lógica ---
+    createFilters();
+    updateNetwork(); // Llama una vez al inicio para mostrar la red vacía o inicial
+
+    // Añadir el listener que actualiza la red cada vez que se marca/desmarca una casilla
+    filtersContainer.addEventListener('change', updateNetwork);
+    closeCardButton.addEventListener('click', hidePersonCard);
+});
+</script>
+
 </body>
 </html>
