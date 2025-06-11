@@ -1,407 +1,287 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
 
-    // --- DATOS INICIALES ---
-    const initialPeopleData = [
-        { id: 1, nombre: 'Ana García', especie: ['Ovina', 'Caprina'], dispositivos: ['RFID', 'Collares'], estudio: ['Comportamiento social'], proyectos: ['Project1', 'Project2'], status: 'IP', institucion: 'UPV' },
-        { id: 2, nombre: 'Bruno Soler', especie: ['Ovina'], dispositivos: ['RFID', 'Drones'], estudio: ['Manejo'], proyectos: ['Project1'], status: 'Postdoc', institucion: 'UPV' },
-        { id: 3, nombre: 'Carla Pons', especie: ['Caprina'], dispositivos: ['Collares', 'Cámaras de visión'], estudio: ['Comportamiento social'], proyectos: ['Project2'], status: 'Predoc', institucion: 'UPV' },
-        { id: 4, nombre: 'David Roca', especie: ['Porcina'], dispositivos: ['IA', 'Alimentadores automáticos'], estudio: ['Nutrición'], proyectos: ['Project3'], status: 'IP', institucion: 'UdL' },
-        { id: 5, nombre: 'Elena Ferré', especie: ['Porcina', 'Avícola'], dispositivos: ['Alimentadores automáticos', 'Básculas'], estudio: ['Nutrición'], proyectos: ['Project3'], status: 'Técnico', institucion: 'UdL' },
-        { id: 6, nombre: 'Felipe Sanz', especie: ['Vacuna'], dispositivos: ['Collares', 'Vallados virtuales'], estudio: ['Comportamiento alimenticio'], proyectos: ['Project4'], status: 'IP', institucion: 'UCO' },
-        { id: 7, nombre: 'Gloria Mínguez', especie: ['Vacuna'], dispositivos: ['Collares', 'Sensores de movimiento'], estudio: ['Salud'], proyectos: ['Project4'], status: 'Postdoc', institucion: 'UCO' },
-        { id: 8, nombre: 'Hector Blanes', especie: ['Ovina'], dispositivos: ['Cámaras de visión', 'IA'], estudio: ['Comportamiento social'], proyectos: ['Project2'], status: 'Predoc', institucion: 'USAL' },
-        { id: 9, nombre: 'Irene Jiménez', especie: ['Ovina', 'Cunícula'], dispositivos: ['Sensores acústicos', 'RFID'], estudio: ['Manejo'], proyectos: ['Project2', 'Project4'], status: 'IP', institucion: 'USAL' },
-        { id: 10, nombre: 'Javier Luna', especie: ['Avícola'], dispositivos: ['Básculas', 'Drones'], estudio: ['Nutrición'], proyectos: [], status: 'Técnico', institucion: 'UAB' },
-        { id: 11, nombre: 'Laura Vidal', especie: ['Avícola', 'Porcina'], dispositivos: ['Drones', 'IA'], estudio: ['Manejo'], proyectos: ['Project1', 'Project3'], status: 'IP', institucion: 'UAB' },
-        { id: 12, nombre: 'Marco Rubio', especie: ['Caprina'], dispositivos: ['Sensores de movimiento', 'Vallados virtuales'], estudio: ['Salud'], proyectos: ['Project1'], status: 'Postdoc', institucion: 'UPV' },
-        { id: 13, nombre: 'Nora Casado', especie: ['Porcina'], dispositivos: ['IA', 'Cámaras de visión'], estudio: ['Comportamiento social'], proyectos: ['Project3'], status: 'Predoc', institucion: 'UdL' },
-        { id: 14, nombre: 'Oscar Pardo', especie: ['Vacuna'], dispositivos: ['RFID', 'Básculas'], estudio: ['Nutrición'], proyectos: ['Project4'], status: 'Técnico', institucion: 'UCO' },
-        { id: 15, nombre: 'Paula Navarro', especie: ['Caprina', 'Vacuna'], dispositivos: ['Collares', 'Cámaras de visión'], estudio: ['Comportamiento alimenticio'], proyectos: ['Project1', 'Project4'], status: 'IP', institucion: 'UCO' }
-    ];
+    // --- 1. DATOS Y CONFIGURACIÓN ---
 
+    // Definición de los campos, sus indicadores y colores asociados
     const filterConfig = {
-        'Especie': ['Ovina', 'Caprina', 'Vacuna', 'Porcina', 'Avícola', 'Cunícula'],
-        'Dispositivos': ['Drones', 'RFID', 'Collares', 'Cámaras de visión', 'IA', 'Alimentadores automáticos', 'Básculas', 'Sensores acústicos', 'Sensores de movimiento', 'Vallados virtuales'],
-        'Estudio': ['Comportamiento alimenticio', 'Comportamiento social', 'Manejo', 'Nutrición', 'Salud'],
-        'Proyectos': ['Project1', 'Project2', 'Project3', 'Project4'],
-        'Status': ['IP', 'Predoc', 'Postdoc', 'Técnico'],
-        'Institución': ['UPV', 'UdL', 'UCO', 'USAL', 'UAB']
+        especie: {
+            label: 'Especie',
+            color: '#4CAF50',
+            indicators: ['Ovina', 'Caprina', 'Vacuna', 'Porcina', 'Avícola', 'Cunícula']
+        },
+        tecnologia: {
+            label: 'Tecnología',
+            color: '#2196F3',
+            indicators: ['Identificación y monitorización', 'Detección y medición', 'Biosensores', 'Posicionamiento y navegación', 'Automatización y robots', 'Análisis de imágenes', 'Ciencia de datos']
+        },
+        lineas: {
+            label: 'Líneas de Estudio',
+            color: '#FFC107',
+            indicators: ['Salud animal', 'Optimización de recursos', 'Comportamiento animal', 'Monitoreo de emisiones', 'Reproducción y mejora genética']
+        },
+        rol: {
+            label: 'Rol',
+            color: '#9C27B0',
+            indicators: ['IP', 'Postdoc', 'Predoc', 'Técnico', 'Asesor científico']
+        },
+        institucion: {
+            label: 'Institución',
+            color: '#E91E63',
+            indicators: ['CICYTEX', 'CSIC/INIA', 'IRTA', 'IUCA', 'NEIKER', 'UAB', 'UCO', 'UdL/Agrotecnio', 'UM', 'USAL', 'USC/Campus Terra', 'UPV']
+        }
     };
 
-    let peopleData = [];
+    // Datos de ejemplo con 15 personas
+    const personas = [
+        { id: 1, nombre: 'Ana García', rol: 'IP', institucion: 'CSIC/INIA', especie: ['Ovina', 'Caprina'], tecnologia: ['Identificación y monitorización', 'Ciencia de datos'], lineas: ['Salud animal'] },
+        { id: 2, nombre: 'Luisa Fernández', rol: 'Postdoc', institucion: 'CSIC/INIA', especie: ['Ovina'], tecnologia: ['Biosensores'], lineas: ['Salud animal'] },
+        { id: 3, nombre: 'Carlos Ruiz', rol: 'Predoc', institucion: 'CSIC/INIA', especie: ['Caprina'], tecnologia: ['Identificación y monitorización'], lineas: ['Reproducción y mejora genética'] },
+        { id: 4, nombre: 'Beatriz Torres', rol: 'IP', institucion: 'IRTA', especie: ['Porcina', 'Avícola'], tecnologia: ['Automatización y robots', 'Análisis de imágenes'], lineas: ['Comportamiento animal'] },
+        { id: 5, nombre: 'David Jiménez', rol: 'Técnico', institucion: 'IRTA', especie: ['Porcina'], tecnologia: ['Automatización y robots'], lineas: ['Optimización de recursos'] },
+        { id: 6, nombre: 'Elena Moreno', rol: 'IP', institucion: 'UCO', especie: ['Vacuna'], tecnologia: ['Posicionamiento y navegación', 'Ciencia de datos'], lineas: ['Optimización de recursos'] },
+        { id: 7, nombre: 'Francisco Díaz', rol: 'Postdoc', institucion: 'UCO', especie: ['Vacuna'], tecnologia: ['Ciencia de datos'], lineas: ['Comportamiento animal'] },
+        { id: 8, nombre: 'Gloria Navarro', rol: 'Predoc', institucion: 'NEIKER', especie: ['Ovina', 'Cunícula'], tecnologia: ['Reproducción y mejora genética'], lineas: ['Salud animal'] },
+        { id: 9, nombre: 'Hugo Alonso', rol: 'IP', institucion: 'UdL/Agrotecnio', especie: ['Vacuna', 'Porcina'], tecnologia: ['Análisis de imágenes'], lineas: ['Monitoreo de emisiones'] },
+        { id: 10, nombre: 'Irene Serrano', rol: 'Técnico', institucion: 'UPV', especie: ['Cunícula'], tecnologia: ['Automatización y robots'], lineas: ['Optimización de recursos'] },
+        { id: 11, nombre: 'Javier Pascual', rol: 'Postdoc', institucion: 'CSIC/INIA', especie: ['Caprina'], tecnologia: ['Biosensores'], lineas: ['Salud animal'] },
+        { id: 12, nombre: 'Laura Romero', rol: 'Asesor científico', institucion: 'IRTA', especie: ['Avícola'], tecnologia: ['Ciencia de datos'], lineas: ['Comportamiento animal'] },
+        { id: 13, nombre: 'Miguel Ángel Soler', rol: 'IP', institucion: 'USAL', especie: ['Vacuna'], tecnologia: ['Identificación y monitorización'], lineas: ['Reproducción y mejora genética'] },
+        { id: 14, nombre: 'Nerea Vidal', rol: 'Predoc', institucion: 'USAL', especie: ['Vacuna'], tecnologia: ['Posicionamiento y navegación'], lineas: ['Optimización de recursos'] },
+        { id: 15, nombre: 'Óscar Martín', rol: 'Técnico', institucion: 'UdL/Agrotecnio', especie: ['Porcina'], tecnologia: ['Análisis de imágenes'], lineas: ['Monitoreo de emisiones'] }
+    ];
 
-    // --- GESTIÓN DE DATOS (localStorage) ---
-    function saveData() {
-        localStorage.setItem('peopleNetworkData', JSON.stringify(peopleData));
-    }
+    // --- 2. CREACIÓN DINÁMICA DE FILTROS ---
 
-    function loadData() {
-        const savedData = localStorage.getItem('peopleNetworkData');
-        if (savedData) {
-            peopleData = JSON.parse(savedData);
-        } else {
-            peopleData = initialPeopleData;
-            saveData();
-        }
-    }
-
-    // --- RENDERIZADO DE LA UI ---
     const filtersContainer = document.getElementById('filters-container');
-    const formFieldsContainer = document.getElementById('form-fields-container');
+    Object.keys(filterConfig).forEach(key => {
+        const config = filterConfig[key];
+        const fieldset = document.createElement('fieldset');
+        fieldset.className = `filter-group ${key}`;
+        
+        const legend = document.createElement('legend');
+        legend.textContent = config.label;
+        fieldset.appendChild(legend);
 
-    function renderFiltersAndForm() {
-        filtersContainer.innerHTML = '';
-        formFieldsContainer.innerHTML = '';
-
-        for (const category in filterConfig) {
-            const options = filterConfig[category];
-            const key = category.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Normaliza el nombre de la categoría
-
-            // Crear filtros en panel izquierdo
-            const filterGroup = document.createElement('details');
-            filterGroup.className = 'filter-group';
-            filterGroup.setAttribute('data-category', category);
-            filterGroup.innerHTML = `<summary>${category}</summary><div class="filter-options"></div>`;
-            const optionsContainer = filterGroup.querySelector('.filter-options');
-            options.forEach(option => {
-                optionsContainer.innerHTML += `
-                    <label>
-                        <input type="checkbox" class="filter-checkbox" data-category="${key}" value="${option}">
-                        ${option}
-                    </label>
-                `;
-            });
-            filtersContainer.appendChild(filterGroup);
-
-            // Crear campos de selección en el formulario CRUD
-            const formFieldGroup = document.createElement('div');
-            let selectHTML = `<label for="form-${key}">${category}:</label><select id="form-${key}" multiple>`;
-            options.forEach(option => {
-                selectHTML += `<option value="${option}">${option}</option>`;
-            });
-            selectHTML += `</select>`;
-            formFieldGroup.innerHTML = selectHTML;
-            formFieldsContainer.appendChild(formFieldGroup);
-        }
-    }
-
-
-    // --- LÓGICA DE VISUALIZACIÓN DE RED ---
-    const networkContainer = document.getElementById('network');
-    let network = null;
-
-    function initializeNetwork() {
-        const options = {
-            nodes: {
-                shape: 'dot',
-                font: {
-                    size: 14,
-                    color: '#333'
-                },
-                borderWidth: 2
-            },
-            edges: {
-                width: 1,
-                color: {
-                    color: '#848484',
-                    highlight: '#0056b3',
-                    hover: '#0056b3'
-                },
-                arrows: {
-                    to: { enabled: false }
-                },
-                smooth: {
-                    enabled: true,
-                    type: "dynamic"
-                }
-            },
-            physics: {
-                solver: 'forceAtlas2Based',
-                forceAtlas2Based: {
-                    gravitationalConstant: -50,
-                    centralGravity: 0.01,
-                    springConstant: 0.08,
-                    springLength: 100,
-                    damping: 0.4,
-                    avoidOverlap: 0.5
-                }
-            },
-            interaction: {
-                hover: true,
-                tooltipDelay: 200
-            }
-        };
-        network = new vis.Network(networkContainer, { nodes: [], edges: [] }, options);
-
-        network.on("click", (params) => {
-            if (params.nodes.length > 0) {
-                const personId = params.nodes[0];
-                showPersonInfo(personId);
-                loadPersonInForm(personId);
-            } else {
-                hidePersonInfo();
-            }
+        config.indicators.forEach(indicator => {
+            const label = document.createElement('label');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = indicator;
+            checkbox.dataset.category = key;
+            checkbox.addEventListener('change', updateVisualization);
+            
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(` ${indicator}`));
+            fieldset.appendChild(label);
         });
+        filtersContainer.appendChild(fieldset);
+    });
+
+
+    // --- 3. CONFIGURACIÓN DE LA VISUALIZACIÓN D3.JS ---
+
+    const container = document.getElementById('network-container');
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    const svg = d3.select("#network-container").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .on('click', () => tooltip.classed('hidden', true)); // Ocultar tooltip al hacer clic en el fondo
+
+    const tooltip = d3.select("#tooltip");
+
+    const simulation = d3.forceSimulation()
+        .force("link", d3.forceLink().id(d => d.id).distance(100))
+        .force("charge", d3.forceManyBody().strength(-400))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collide", d3.forceCollide().radius(d => (d.rol === 'IP' ? 30 : 20) + 5));
+
+    let link = svg.append("g").attr("class", "links").selectAll("line");
+    let node = svg.append("g").attr("class", "nodes").selectAll("g");
+
+    function ticked() {
+        link
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+    
+        node
+            .attr("transform", d => `translate(${d.x},${d.y})`);
     }
+
+    // --- 4. LÓGICA DE ACTUALIZACIÓN ---
 
     function updateVisualization() {
-        const selectedFilters = getSelectedFilters();
-        const filteredPeople = filterPeople(selectedFilters);
+        // Obtener filtros seleccionados
+        const selectedFilters = Array.from(document.querySelectorAll('#filters-container input:checked'))
+            .map(input => ({ value: input.value, category: input.dataset.category }));
 
-        const { nodes, edges } = createNetworkData(filteredPeople);
+        // Filtrar personas: se muestra si coincide con CUALQUIER filtro seleccionado
+        let filteredPersonas = personas;
+        if (selectedFilters.length > 0) {
+            const selectedValues = selectedFilters.map(f => f.value);
+            filteredPersonas = personas.filter(p => {
+                return p.rol === p.institucion || // Edge case for single values
+                       selectedValues.includes(p.rol) ||
+                       selectedValues.includes(p.institucion) ||
+                       p.especie.some(e => selectedValues.includes(e)) ||
+                       p.tecnologia.some(t => selectedValues.includes(t)) ||
+                       p.lineas.some(l => selectedValues.includes(l));
+            });
+        }
+        
+        // Crear nodos y enlaces para la simulación
+        const nodes = filteredPersonas.map(p => ({...p})); // Copia para no mutar datos originales
+        const links = createLinks(nodes);
 
-        network.setData({ nodes, edges });
-    }
+        // Actualizar los nodos en la visualización
+        node = node.data(nodes, d => d.id)
+            .join(
+                enter => {
+                    const g = enter.append("g").attr("class", "node");
+                    
+                    g.append("circle")
+                        .attr("r", d => d.rol === 'IP' ? 25 : 15) // IPs más grandes
+                        .attr("fill", d => filterConfig.institucion.color) // Color por institución
+                        .on("click", (event, d) => {
+                            event.stopPropagation(); // Evitar que el clic se propague al SVG
+                            showTooltip(event, d);
+                        });
+                    
+                    g.append("text")
+                        .text(d => d.nombre);
+                    
+                    g.call(drag(simulation));
+                    return g;
+                },
+                update => update,
+                exit => exit.remove()
+            );
+        
+        // Actualizar enlaces
+        link = link.data(links, d => `${d.source.id}-${d.target.id}`)
+            .join("line")
+            .attr("class", "link")
+            .attr("stroke", d => d.color)
+            .attr("stroke-opacity", 0.7)
+            .attr("stroke-width", 3);
 
-    function getSelectedFilters() {
-        const selected = {};
-        document.querySelectorAll('.filter-checkbox:checked').forEach(checkbox => {
-            const category = checkbox.dataset.category;
-            if (!selected[category]) {
-                selected[category] = [];
-            }
-            selected[category].push(checkbox.value);
-        });
-        return selected;
+
+        // Reiniciar la simulación con los nuevos datos
+        simulation.nodes(nodes);
+        simulation.force("link").links(links);
+        simulation.on("tick", ticked);
+        simulation.alpha(1).restart();
+        
+        applySatelliteLayout(nodes);
     }
     
-    function filterPeople(filters) {
-        if (Object.keys(filters).length === 0) {
-            return peopleData; // Mostrar todos si no hay filtros
-        }
+    function createLinks(nodes) {
+        const links = [];
+        const nodeIds = new Set(nodes.map(n => n.id));
 
-        return peopleData.filter(person => {
-            return Object.entries(filters).some(([category, values]) => {
-                 const personValue = person[category];
-                 if (!personValue) return false;
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const personA = nodes[i];
+                const personB = nodes[j];
 
-                 if (Array.isArray(personValue)) {
-                     return personValue.some(item => values.includes(item));
-                 } else {
-                     return values.includes(personValue);
-                 }
-            });
-        });
-    }
+                // Comprobar si ambos nodos están en la vista actual
+                if (!nodeIds.has(personA.id) || !nodeIds.has(personB.id)) continue;
+                
+                let sharedCategory = null;
 
-    function createNetworkData(filteredPeople) {
-        const nodes = [];
-        const edges = new Set();
-        
-        const peopleMap = new Map(filteredPeople.map(p => [p.id, p]));
-        
-        // Lógica de jerarquía IP/Satélite
-        const institutionGroups = {};
-        filteredPeople.forEach(p => {
-            if (!institutionGroups[p.institucion]) {
-                institutionGroups[p.institucion] = { ip: [], others: [] };
-            }
-            if (p.status === 'IP') {
-                institutionGroups[p.institucion].ip.push(p);
-            } else {
-                institutionGroups[p.institucion].others.push(p);
-            }
-        });
+                // Chequear por institución compartida
+                if (personA.institucion === personB.institucion) {
+                    sharedCategory = 'institucion';
+                }
+                // Chequear por otras categorías
+                else if (personA.especie.some(e => personB.especie.includes(e))) {
+                    sharedCategory = 'especie';
+                } else if (personA.tecnologia.some(t => personB.tecnologia.includes(t))) {
+                    sharedCategory = 'tecnologia';
+                } else if (personA.lineas.some(l => personB.lineas.includes(l))) {
+                    sharedCategory = 'lineas';
+                }
 
-        filteredPeople.forEach(person => {
-            let isSatellite = false;
-            const group = institutionGroups[person.institucion];
-            if (group && group.ip.length > 0 && person.status !== 'IP') {
-                isSatellite = true;
-            }
-
-            nodes.push({
-                id: person.id,
-                label: person.nombre,
-                title: `${person.nombre} (${person.status} en ${person.institucion})`,
-                value: person.status === 'IP' ? 30 : 15, // Tamaño del nodo
-                mass: person.status === 'IP' ? 5 : 1, // 'Peso' para la física
-                color: isSatellite ? '#f4a261' : (person.status === 'IP' ? '#e76f51' : '#2a9d8f')
-            });
-        });
-
-        // Crear conexiones (edges)
-        for (let i = 0; i < filteredPeople.length; i++) {
-            for (let j = i + 1; j < filteredPeople.length; j++) {
-                const personA = filteredPeople[i];
-                const personB = filteredPeople[j];
-                const commonality = findCommonality(personA, personB);
-                if (commonality.length > 0) {
-                    const edgeId = [personA.id, personB.id].sort().join('-');
-                    edges.add({
-                        id: edgeId,
-                        from: personA.id,
-                        to: personB.id,
-                        title: `En común: ${commonality.join(', ')}`
+                if (sharedCategory) {
+                    links.push({
+                        source: personA.id,
+                        target: personB.id,
+                        color: filterConfig[sharedCategory].color
                     });
                 }
             }
         }
-        
-        return { nodes, edges: Array.from(edges) };
+        return links;
     }
-
-    function findCommonality(p1, p2) {
-        const common = [];
-        if (p1.institucion === p2.institucion) common.push(p1.institucion);
-        
-        Object.keys(filterConfig).forEach(cat => {
-            const key = cat.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            const val1 = p1[key] || [];
-            const val2 = p2[key] || [];
-            if (Array.isArray(val1) && Array.isArray(val2)) {
-                const shared = val1.filter(v => val2.includes(v));
-                if (shared.length > 0) common.push(...shared);
-            }
-        });
-
-        return [...new Set(common)]; // Devolver únicos
-    }
-
-    // --- LÓGICA DE LA TARJETA DE INFORMACIÓN ---
-    const infoCard = document.getElementById('person-info-card');
-    const infoName = document.getElementById('info-name');
-    const infoDetails = document.getElementById('info-details');
     
-    function showPersonInfo(personId) {
-        const person = peopleData.find(p => p.id === personId);
-        if (!person) return;
+    // --- 5. FUNCIONALIDADES ADICIONALES ---
 
-        infoName.textContent = person.nombre;
-        let detailsHtml = `<p><strong>ID:</strong> ${person.id}</p>`;
-        for (const category in filterConfig) {
-             const key = category.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-             const value = person[key];
-             if(value && (!Array.isArray(value) || value.length > 0)) {
-                detailsHtml += `<p><strong>${category}:</strong> ${Array.isArray(value) ? value.join(', ') : value}</p>`;
-             }
+    // Lógica para arrastrar nodos
+    function drag(simulation) {
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
         }
-        infoDetails.innerHTML = detailsHtml;
-        infoCard.style.display = 'block';
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+        return d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended);
     }
 
-    function hidePersonInfo() {
-        infoCard.style.display = 'none';
+    // Lógica para el tooltip
+    function showTooltip(event, d) {
+        const content = `
+            <h3>${d.nombre}</h3>
+            <p><strong>Rol:</strong> ${d.rol}</p>
+            <p><strong>Institución:</strong> ${d.institucion}</p>
+            ${d.especie.length > 0 ? `<p><strong>Especies:</strong></p><ul>${d.especie.map(i => `<li>${i}</li>`).join('')}</ul>` : ''}
+            ${d.tecnologia.length > 0 ? `<p><strong>Tecnologías:</strong></p><ul>${d.tecnologia.map(i => `<li>${i}</li>`).join('')}</ul>` : ''}
+            ${d.lineas.length > 0 ? `<p><strong>Líneas:</strong></p><ul>${d.lineas.map(i => `<li>${i}</li>`).join('')}</ul>` : ''}
+        `;
+
+        tooltip
+            .html(content)
+            .style("left", (event.pageX + 15) + "px")
+            .style("top", (event.pageY - 28) + "px")
+            .classed("hidden", false);
     }
-
-
-    // --- LÓGICA DEL FORMULARIO CRUD ---
-    const form = document.getElementById('person-form');
-    const personIdInput = document.getElementById('person-id');
-    const personNameInput = document.getElementById('person-name');
-
-    function loadPersonInForm(personId) {
-        const person = peopleData.find(p => p.id === personId);
-        if (!person) return;
-
-        clearForm();
-        personIdInput.value = person.id;
-        personNameInput.value = person.nombre;
+    
+    // Lógica para la agrupación satelital
+    function applySatelliteLayout(nodes) {
+        const institutionGroups = d3.group(nodes, d => d.institucion);
         
-        for (const category in filterConfig) {
-            const key = category.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            const select = document.getElementById(`form-${key}`);
-            const personValue = person[key] || [];
-            const valuesToSelect = Array.isArray(personValue) ? personValue : [personValue];
-            
-            for (const option of select.options) {
-                option.selected = valuesToSelect.includes(option.value);
-            }
-        }
-    }
+        institutionGroups.forEach(group => {
+            const ips = group.filter(p => p.rol === 'IP');
+            const others = group.filter(p => p.rol !== 'IP');
 
-    function clearForm() {
-        form.reset();
-        personIdInput.value = '';
-        document.querySelectorAll('#form-fields-container select').forEach(select => {
-            Array.from(select.options).forEach(opt => opt.selected = false);
+            if (ips.length > 0 && others.length > 0) {
+                const ipCenter = ips[0]; // Usamos el primer IP como centro
+                ipCenter.fx = ipCenter.x; // Fijar la posición del IP
+                ipCenter.fy = ipCenter.y;
+
+                others.forEach((person, i) => {
+                    const angle = (i / others.length) * 2 * Math.PI;
+                    const radius = 60; // Distancia del satélite al IP
+                    person.fx = ipCenter.x + radius * Math.cos(angle);
+                    person.fy = ipCenter.y + radius * Math.sin(angle);
+                });
+            } else {
+                 // Liberar posiciones si la condición no se cumple
+                 group.forEach(p => { p.fx = null; p.fy = null; });
+            }
         });
     }
 
-    function handleCreate() {
-        if (!personNameInput.value) {
-            alert('El nombre es obligatorio.');
-            return;
-        }
-
-        const newId = peopleData.length > 0 ? Math.max(...peopleData.map(p => p.id)) + 1 : 1;
-        const newPerson = { id: newId, nombre: personNameInput.value };
-
-        for (const category in filterConfig) {
-            const key = category.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            const select = document.getElementById(`form-${key}`);
-            const values = Array.from(select.selectedOptions).map(opt => opt.value);
-            // Si la categoría no es de selección múltiple (ej. Status, Institución), tomar solo el primer valor.
-            // En esta configuración, todas son `multiple` para consistencia, pero se podría adaptar.
-            newPerson[key] = values; 
-        }
-        
-        // Simplificación: Status e Institución no deberían ser multi-selección.
-        newPerson['status'] = newPerson['status'][0] || '';
-        newPerson['institucion'] = newPerson['institucion'][0] || '';
-
-
-        peopleData.push(newPerson);
-        saveData();
-        updateVisualization();
-        clearForm();
-    }
-
-    function handleUpdate() {
-        const idToUpdate = parseInt(personIdInput.value);
-        if (!idToUpdate) {
-            alert('Selecciona una persona de la red para modificar.');
-            return;
-        }
-
-        const personIndex = peopleData.findIndex(p => p.id === idToUpdate);
-        if (personIndex === -1) return;
-        
-        const updatedPerson = { id: idToUpdate, nombre: personNameInput.value };
-        for (const category in filterConfig) {
-            const key = category.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            const select = document.getElementById(`form-${key}`);
-            const values = Array.from(select.selectedOptions).map(opt => opt.value);
-            updatedPerson[key] = values;
-        }
-        
-        updatedPerson['status'] = updatedPerson['status'][0] || '';
-        updatedPerson['institucion'] = updatedPerson['institucion'][0] || '';
-
-        peopleData[personIndex] = updatedPerson;
-        saveData();
-        updateVisualization();
-        showPersonInfo(idToUpdate); // Actualizar tarjeta de info
-    }
-
-    function handleDelete() {
-        const idToDelete = parseInt(personIdInput.value);
-        if (!idToDelete) {
-            alert('Selecciona una persona de la red para eliminar.');
-            return;
-        }
-        
-        if (confirm(`¿Seguro que quieres eliminar a ${peopleData.find(p=>p.id === idToDelete).nombre}?`)) {
-            peopleData = peopleData.filter(p => p.id !== idToDelete);
-            saveData();
-            updateVisualization();
-            clearForm();
-            hidePersonInfo();
-        }
-    }
-
-
-    // --- INICIALIZACIÓN Y EVENT LISTENERS ---
-    loadData();
-    renderFiltersAndForm();
-    initializeNetwork();
+    // --- 6. INICIALIZACIÓN ---
     updateVisualization();
-
-    document.getElementById('filters-container').addEventListener('change', updateVisualization);
-    document.getElementById('close-card-btn').addEventListener('click', hidePersonInfo);
-    
-    document.getElementById('create-btn').addEventListener('click', handleCreate);
-    document.getElementById('update-btn').addEventListener('click', handleUpdate);
-    document.getElementById('delete-btn').addEventListener('click', handleDelete);
-    document.getElementById('clear-form-btn').addEventListener('click', clearForm);
 });
