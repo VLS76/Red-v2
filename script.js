@@ -1,5 +1,3 @@
-// script.js
-
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- DATOS INICIALES ---
@@ -189,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!institutionGroups[p.institucion]) {
                 institutionGroups[p.institucion] = { ip: [], others: [] };
             }
-            if (p.rol === 'IP') {
+            if (p.rol === 'IP') { 
                 institutionGroups[p.institucion].ip.push(p);
             } else {
                 institutionGroups[p.institucion].others.push(p);
@@ -199,16 +197,16 @@ document.addEventListener('DOMContentLoaded', () => {
         filteredPeople.forEach(person => {
             let isSatellite = false;
             const group = institutionGroups[person.institucion];
-            if (group && group.ip.length > 0 && person.rol !== 'IP') {
+            if (group && group.ip.length > 0 && person.rol !== 'IP') { 
                 isSatellite = true;
             }
 
             nodes.push({
                 id: person.id,
                 label: person.nombre,
-                title: `${person.nombre} (${person.rol} en ${person.institucion})`,
-                value: person.rol === 'IP' ? 30 : 15, // Tamaño del nodo
-                mass: person.rol === 'IP' ? 5 : 1, // 'Peso' para la física
+                title: `${person.nombre} (${person.rol} en ${person.institucion})`, 
+                value: person.rol === 'IP' ? 30 : 15, 
+                mass: person.rol === 'IP' ? 5 : 1, 
                 color: isSatellite ? '#f4a261' : (person.rol === 'IP' ? '#e76f51' : '#2a9d8f')
             });
         });
@@ -238,13 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const common = [];
         if (p1.institucion === p2.institucion) common.push(p1.institucion);
         
-        // Specific check for 'rol' to avoid it being treated as a multi-select if it's not
         if (p1.rol === p2.rol) common.push(p1.rol);
 
-        // Iterate through filterConfig, excluding 'Rol' and 'Institución' as they are handled above
         Object.keys(filterConfig).forEach(cat => {
             const key = cat.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            // Only process if the key is not 'rol' or 'institucion'
             if (key !== 'rol' && key !== 'institucion') {
                 const val1 = p1[key] || [];
                 const val2 = p2[key] || [];
