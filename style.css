@@ -1,9 +1,0 @@
-#tabs details {
-    margin-bottom: 10px;
-    border: 2px solid;
-    padding: 5px;
-}
-#tabs summary {
-    cursor: pointer;
-    font-weight: bold;
-}
