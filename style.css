@@ -1,275 +1,108 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* style.css */
 
+/* Base font for the entire page */
 body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #333;
-    height: 100vh;
-    overflow: hidden;
+    font-family: 'Inter', sans-serif;
 }
 
-.container {
-    display: flex;
-    height: 100vh;
-}
-
-.sidebar {
-    width: 300px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 20px;
-    overflow-y: auto;
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar h2 {
-    margin-bottom: 20px;
-    color: #4a5568;
-    font-size: 24px;
-    text-align: center;
-}
-
-.field-group {
-    margin-bottom: 15px;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-}
-
-.field-group:hover {
-    transform: translateY(-2px);
-}
-
-.field-group.especie {
-    border-left: 5px solid #e53e3e;
-}
-
-.field-group.tecnologia {
-    border-left: 5px solid #3182ce;
-}
-
-.field-group.lineas {
-    border-left: 5px solid #38a169;
-}
-
-.field-group.rol {
-    border-left: 5px solid #d69e2e;
-}
-
-.field-group.institucion {
-    border-left: 5px solid #805ad5;
-}
-
-.field-header {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
-    padding: 15px;
+/* Custom styles for filter tabs */
+.tab-header {
     cursor: pointer;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-weight: bold;
-    color: #2d3748;
-    transition: background 0.2s ease;
+    font-weight: 600;
+    color: #374151; /* gray-800 */
 }
 
-.field-header:hover {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.9));
+.tab-header:hover {
+    background-color: #f3f4f6; /* gray-100 */
 }
 
-.arrow {
-    transition: transform 0.2s ease;
+.tab-content {
+    max-height: 0; /* Initially hidden */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out; /* Smooth collapse/expand */
+    padding: 0 16px;
+    margin-bottom: 8px;
 }
 
-.field-content {
-    background: rgba(255, 255, 255, 0.8);
-    padding: 15px;
-    display: none;
-    flex-direction: column;
-    gap: 8px;
+.tab-content.active {
+    max-height: 500px; /* Max height when active; adjust as needed for content */
+    padding-bottom: 12px;
 }
 
-.field-content.show {
+.tab-checkbox-group {
     display: flex;
+    flex-direction: column;
+    gap: 8px; /* Spacing between checkboxes */
 }
 
-.field-content label {
+.tab-checkbox-group label {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 5px;
-    border-radius: 5px;
-    transition: background 0.2s ease;
     cursor: pointer;
+    font-size: 0.9rem;
+    color: #4b5563; /* gray-700 */
 }
 
-.field-content label:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-.field-content input[type="checkbox"] {
+.tab-checkbox-group input[type="checkbox"] {
     width: 16px;
     height: 16px;
-    accent-color: #4299e1;
+    accent-color: #3b82f6; /* blue-500, for checkbox color */
+    border-radius: 4px; /* Slightly rounded checkboxes */
 }
 
-.main-content {
-    flex: 1;
-    position: relative;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
+/* Arrow icon for collapsible tabs */
+.arrow-icon {
+    transition: transform 0.3s ease; /* Smooth rotation */
 }
 
-#network-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
+.arrow-icon.rotated {
+    transform: rotate(90deg); /* Rotates when tab is open */
 }
 
-#network-svg {
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 70%);
-}
-
+/* D3 styling for network visualization */
 .node {
     cursor: pointer;
-    transition: all 0.3s ease;
+    stroke: #fff; /* White border around nodes */
+    stroke-width: 1.5px;
+    transition: all 0.2s ease-in-out; /* Smooth transitions for node changes */
 }
 
-.node:hover {
-    filter: brightness(1.2);
-    transform: scale(1.1);
-}
-
-.node-ip {
-    r: 20;
-    fill: #4299e1;
-    stroke: #2b6cb0;
-    stroke-width: 3;
-}
-
-.node-satellite {
-    r: 15;
-    fill: #68d391;
-    stroke: #38a169;
-    stroke-width: 2;
-}
-
-.node-regular {
-    r: 18;
-    fill: #ed8936;
-    stroke: #c05621;
-    stroke-width: 2;
+.node-text {
+    font-size: 10px;
+    pointer-events: none; /* Allows clicks to pass through to the circle */
+    user-select: none; /* Prevents text selection */
+    fill: #333; /* Dark gray text */
+    /* Text shadow for better readability over links/background */
+    text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
 }
 
 .link {
-    stroke: rgba(255, 255, 255, 0.6);
-    stroke-width: 2;
-    transition: all 0.3s ease;
-}
-
-.link:hover {
-    stroke: rgba(255, 255, 255, 0.9);
-    stroke-width: 3;
+    stroke-opacity: 0.8; /* Slightly transparent links */
+    stroke-width: 2px;
 }
 
 .link-label {
-    font-size: 10px;
-    fill: rgba(255, 255, 255, 0.8);
-    text-anchor: middle;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    pointer-events: none;
+    font-size: 8px;
+    fill: #555;
+    pointer-events: none; /* Allows clicks to pass through */
+    user-select: none; /* Prevents text selection */
+    /* Text shadow for better readability over links/background */
+    text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
 }
 
-.node-label {
-    font-size: 12px;
-    font-weight: bold;
-    text-anchor: middle;
-    fill: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-    pointer-events: none;
+/* Specific styling for IP and non-IP nodes */
+.node.ip {
+    fill: #3b82f6; /* Blue for IP nodes */
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-}
-
-.modal-content {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    margin: 10% auto;
-    padding: 30px;
-    border-radius: 15px;
-    width: 80%;
-    max-width: 500px;
-    color: white;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    position: relative;
-}
-
-.close {
-    color: rgba(255, 255, 255, 0.8);
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    position: absolute;
-    top: 15px;
-    right: 20px;
-}
-
-.close:hover {
-    color: white;
-}
-
-#modal-name {
-    margin-bottom: 20px;
-    font-size: 24px;
-    text-align: center;
-}
-
-.modal-section {
-    margin: 15px 0;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 8px;
-}
-
-.modal-section h4 {
-    margin-bottom: 10px;
-    color: #ffd700;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding-bottom: 5px;
-}
-
-.modal-section ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.modal-section li {
-    padding: 3px 0;
-    position: relative;
-    padding-left: 20px;
-}
-
-.modal-section li:before {
-    content: "▸";
-    position: absolute;
-    left: 0;
-    color: #ffd700;
+.node.non-ip {
+    fill: #a78bfa; /* Purple for non-IP nodes (Postdoc, Predoc, Técnico, Asesor científico) */
 }
