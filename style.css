@@ -1,0 +1,71 @@
+/* style.css */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+#container {
+  display: flex;
+  height: 100vh;
+}
+
+#filters {
+  width: 300px;
+  overflow-y: auto;
+  border-right: 1px solid #ccc;
+  padding: 1em;
+  background-color: #fff;
+}
+
+.field-tab {
+  margin-bottom: 1em;
+  border: 2px solid;
+  border-radius: 5px;
+  padding: 0.5em;
+}
+
+.field-tab summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.field-tab input {
+  margin-right: 0.5em;
+}
+
+#network {
+  flex-grow: 1;
+  height: 100%;
+}
+
+#infoBox {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-width: 250px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Border colors for each field */
+.field-Especie {
+  border-color: #d9534f;
+}
+.field-Tecnologia {
+  border-color: #5bc0de;
+}
+.field-Lineas {
+  border-color: #5cb85c;
+}
+.field-Rol {
+  border-color: #f0ad4e;
+}
+.field-Institucion {
+  border-color: #337ab7;
+}
