@@ -1,22 +1,113 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Red de Personas</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red de Personas - Visualización</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
 <body>
-  <div id="container">
-    <aside id="filters">
-      <!-- Tabs dynamically generated here -->
-    </aside>
-    <main>
-      <div id="network"></div>
-      <div id="infoBox" class="hidden"></div>
-    </main>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/vis-network.min.js"></script>
-  <script src="script.js"></script>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Filtros</h2>
+            
+            <div class="field-group especie">
+                <div class="field-header" onclick="toggleField('especie')">
+                    <span>Especie</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="field-content" id="especie-content">
+                    <label><input type="checkbox" value="Ovina" onchange="updateFilter()"> Ovina</label>
+                    <label><input type="checkbox" value="Caprina" onchange="updateFilter()"> Caprina</label>
+                    <label><input type="checkbox" value="Vacuna" onchange="updateFilter()"> Vacuna</label>
+                    <label><input type="checkbox" value="Porcina" onchange="updateFilter()"> Porcina</label>
+                    <label><input type="checkbox" value="Avícola" onchange="updateFilter()"> Avícola</label>
+                    <label><input type="checkbox" value="Cunícula" onchange="updateFilter()"> Cunícula</label>
+                </div>
+            </div>
+
+            <div class="field-group tecnologia">
+                <div class="field-header" onclick="toggleField('tecnologia')">
+                    <span>Tecnología</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="field-content" id="tecnologia-content">
+                    <label><input type="checkbox" value="Identificación y monitorización" onchange="updateFilter()"> Identificación y monitorización</label>
+                    <label><input type="checkbox" value="Detección y medición" onchange="updateFilter()"> Detección y medición</label>
+                    <label><input type="checkbox" value="Biosensores" onchange="updateFilter()"> Biosensores</label>
+                    <label><input type="checkbox" value="Posicionamiento y navegación" onchange="updateFilter()"> Posicionamiento y navegación</label>
+                    <label><input type="checkbox" value="Automatización y robots" onchange="updateFilter()"> Automatización y robots</label>
+                    <label><input type="checkbox" value="Análisis de imágenes" onchange="updateFilter()"> Análisis de imágenes</label>
+                    <label><input type="checkbox" value="Ciencia de datos" onchange="updateFilter()"> Ciencia de datos</label>
+                </div>
+            </div>
+
+            <div class="field-group lineas">
+                <div class="field-header" onclick="toggleField('lineas')">
+                    <span>Líneas</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="field-content" id="lineas-content">
+                    <label><input type="checkbox" value="Salud animal" onchange="updateFilter()"> Salud animal</label>
+                    <label><input type="checkbox" value="Optimización de recursos" onchange="updateFilter()"> Optimización de recursos</label>
+                    <label><input type="checkbox" value="Comportamiento animal" onchange="updateFilter()"> Comportamiento animal</label>
+                    <label><input type="checkbox" value="Monitoreo de emisiones" onchange="updateFilter()"> Monitoreo de emisiones</label>
+                    <label><input type="checkbox" value="Reproducción y mejora genética" onchange="updateFilter()"> Reproducción y mejora genética</label>
+                </div>
+            </div>
+
+            <div class="field-group rol">
+                <div class="field-header" onclick="toggleField('rol')">
+                    <span>Rol</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="field-content" id="rol-content">
+                    <label><input type="checkbox" value="IP" onchange="updateFilter()"> IP</label>
+                    <label><input type="checkbox" value="Postdoc" onchange="updateFilter()"> Postdoc</label>
+                    <label><input type="checkbox" value="Predoc" onchange="updateFilter()"> Predoc</label>
+                    <label><input type="checkbox" value="Técnico" onchange="updateFilter()"> Técnico</label>
+                    <label><input type="checkbox" value="Asesor científico" onchange="updateFilter()"> Asesor científico</label>
+                </div>
+            </div>
+
+            <div class="field-group institucion">
+                <div class="field-header" onclick="toggleField('institucion')">
+                    <span>Institución</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="field-content" id="institucion-content">
+                    <label><input type="checkbox" value="CICYTEX" onchange="updateFilter()"> CICYTEX</label>
+                    <label><input type="checkbox" value="CSIC/INIA" onchange="updateFilter()"> CSIC/INIA</label>
+                    <label><input type="checkbox" value="IRTA" onchange="updateFilter()"> IRTA</label>
+                    <label><input type="checkbox" value="IUCA" onchange="updateFilter()"> IUCA</label>
+                    <label><input type="checkbox" value="NEIKER" onchange="updateFilter()"> NEIKER</label>
+                    <label><input type="checkbox" value="UAB" onchange="updateFilter()"> UAB</label>
+                    <label><input type="checkbox" value="UCO" onchange="updateFilter()"> UCO</label>
+                    <label><input type="checkbox" value="UdL/Agrotecnio" onchange="updateFilter()"> UdL/Agrotecnio</label>
+                    <label><input type="checkbox" value="UM" onchange="updateFilter()"> UM</label>
+                    <label><input type="checkbox" value="USAL" onchange="updateFilter()"> USAL</label>
+                    <label><input type="checkbox" value="USC/Campus Terra" onchange="updateFilter()"> USC/Campus Terra</label>
+                    <label><input type="checkbox" value="UPV" onchange="updateFilter()"> UPV</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div id="network-container">
+                <svg id="network-svg"></svg>
+            </div>
+        </div>
+    </div>
+
+    <div id="person-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modal-name"></h3>
+            <div id="modal-details"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

@@ -1,71 +1,275 @@
-/* style.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    height: 100vh;
+    overflow: hidden;
 }
 
-#container {
-  display: flex;
-  height: 100vh;
+.container {
+    display: flex;
+    height: 100vh;
 }
 
-#filters {
-  width: 300px;
-  overflow-y: auto;
-  border-right: 1px solid #ccc;
-  padding: 1em;
-  background-color: #fff;
+.sidebar {
+    width: 300px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
 }
 
-.field-tab {
-  margin-bottom: 1em;
-  border: 2px solid;
-  border-radius: 5px;
-  padding: 0.5em;
+.sidebar h2 {
+    margin-bottom: 20px;
+    color: #4a5568;
+    font-size: 24px;
+    text-align: center;
 }
 
-.field-tab summary {
-  cursor: pointer;
-  font-weight: bold;
+.field-group {
+    margin-bottom: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
 }
 
-.field-tab input {
-  margin-right: 0.5em;
+.field-group:hover {
+    transform: translateY(-2px);
 }
 
-#network {
-  flex-grow: 1;
-  height: 100%;
+.field-group.especie {
+    border-left: 5px solid #e53e3e;
 }
 
-#infoBox {
-  position: absolute;
-  background: white;
-  border: 1px solid #ccc;
-  padding: 10px;
-  max-width: 250px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  z-index: 10;
+.field-group.tecnologia {
+    border-left: 5px solid #3182ce;
 }
 
-.hidden {
-  display: none;
+.field-group.lineas {
+    border-left: 5px solid #38a169;
 }
 
-/* Border colors for each field */
-.field-Especie {
-  border-color: #d9534f;
+.field-group.rol {
+    border-left: 5px solid #d69e2e;
 }
-.field-Tecnologia {
-  border-color: #5bc0de;
+
+.field-group.institucion {
+    border-left: 5px solid #805ad5;
 }
-.field-Lineas {
-  border-color: #5cb85c;
+
+.field-header {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    color: #2d3748;
+    transition: background 0.2s ease;
 }
-.field-Rol {
-  border-color: #f0ad4e;
+
+.field-header:hover {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.9));
 }
-.field-Institucion {
-  border-color: #337ab7;
+
+.arrow {
+    transition: transform 0.2s ease;
+}
+
+.field-content {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 15px;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field-content.show {
+    display: flex;
+}
+
+.field-content label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.field-content label:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.field-content input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #4299e1;
+}
+
+.main-content {
+    flex: 1;
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+#network-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#network-svg {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 70%);
+}
+
+.node {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.node:hover {
+    filter: brightness(1.2);
+    transform: scale(1.1);
+}
+
+.node-ip {
+    r: 20;
+    fill: #4299e1;
+    stroke: #2b6cb0;
+    stroke-width: 3;
+}
+
+.node-satellite {
+    r: 15;
+    fill: #68d391;
+    stroke: #38a169;
+    stroke-width: 2;
+}
+
+.node-regular {
+    r: 18;
+    fill: #ed8936;
+    stroke: #c05621;
+    stroke-width: 2;
+}
+
+.link {
+    stroke: rgba(255, 255, 255, 0.6);
+    stroke-width: 2;
+    transition: all 0.3s ease;
+}
+
+.link:hover {
+    stroke: rgba(255, 255, 255, 0.9);
+    stroke-width: 3;
+}
+
+.link-label {
+    font-size: 10px;
+    fill: rgba(255, 255, 255, 0.8);
+    text-anchor: middle;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+.node-label {
+    font-size: 12px;
+    font-weight: bold;
+    text-anchor: middle;
+    fill: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    pointer-events: none;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 500px;
+    color: white;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.close {
+    color: rgba(255, 255, 255, 0.8);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+}
+
+.close:hover {
+    color: white;
+}
+
+#modal-name {
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+}
+
+.modal-section {
+    margin: 15px 0;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.modal-section h4 {
+    margin-bottom: 10px;
+    color: #ffd700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 5px;
+}
+
+.modal-section ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.modal-section li {
+    padding: 3px 0;
+    position: relative;
+    padding-left: 20px;
+}
+
+.modal-section li:before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #ffd700;
 }
