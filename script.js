@@ -2,21 +2,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- DATOS INICIALES ---
     const initialPeopleData = [
-        { id: 1, nombre: 'Ana García', especie: ['Ovina', 'Caprina'], tecnologia: ['Identificación y monitorización'], lineas: ['Comportamineto animal'], rol: 'IP', institucion: 'UPV' },
-        { id: 2, nombre: 'Bruno Soler', especie: ['Ovina'], tecnologia: ['Identificación y monitorización', 'Automatización y robots'], lineas: ['Optimización de recursos'], rol: 'Postdoc', institucion: 'UPV' },
-        { id: 3, nombre: 'Carla Pons', especie: ['Caprina'], tecnologia: ['Identificación y monitorización', 'Analisis de imágenes'], lineas: ['Comportamineto animal'], rol: 'Predoc', institucion: 'UPV' },
-        { id: 4, nombre: 'David Roca', especie: ['Porcina'], tecnologia: ['Ciencia de datos', 'Automatización y robots'], lineas: ['Optimización de recursos'], rol: 'IP', institucion: 'UdL/Agrotecnio' },
-        { id: 5, nombre: 'Elena Ferré', especie: ['Porcina', 'Avícola'], tecnologia: ['Automatización y robots', 'Detección y medición'], lineas: ['Optimización de recursos'], rol: 'Técnico', institucion: 'UdL/Agrotecnio' },
-        { id: 6, nombre: 'Felipe Sanz', especie: ['Vacuna'], tecnologia: ['Identificación y monitorización', 'Psicionamiento y navegación'], lineas: ['Comportamineto animal'], rol: 'IP', institucion: 'UCO' },
-        { id: 7, nombre: 'Gloria Mínguez', especie: ['Vacuna'], tecnologia: ['Identificación y monitorización', 'Detección y medición'], lineas: ['Salud animal'], rol: 'Postdoc', institucion: 'UCO' },
-        { id: 8, nombre: 'Hector Blanes', especie: ['Ovina'], tecnologia: ['Analisis de imágenes', 'Ciencia de datos'], lineas: ['Comportamineto animal'], rol: 'Predoc', institucion: 'USAL' },
-        { id: 9, nombre: 'Irene Jiménez', especie: ['Ovina', 'Cunícula'], tecnologia: ['Biosensores', 'Identificación y monitorización'], lineas: ['Optimización de recursos'], rol: 'IP', institucion: 'USAL' },
-        { id: 10, nombre: 'Javier Luna', especie: ['Avícola'], tecnologia: ['Detección y medición', 'Automatización y robots'], lineas: ['Optimización de recursos'], rol: 'Técnico', institucion: 'UAB' },
-        { id: 11, nombre: 'Laura Vidal', especie: ['Avícola', 'Porcina'], tecnologia: ['Automatización y robots', 'Ciencia de datos'], lineas: ['Optimización de recursos'], rol: 'IP', institucion: 'UAB' },
-        { id: 12, nombre: 'Marco Rubio', especie: ['Caprina'], tecnologia: ['Detección y medición', 'Psicionamiento y navegación'], lineas: ['Salud animal'], rol: 'Postdoc', institucion: 'UPV' },
-        { id: 13, nombre: 'Nora Casado', especie: ['Porcina'], tecnologia: ['Ciencia de datos', 'Analisis de imágenes'], lineas: ['Comportamineto animal'], rol: 'Predoc', institucion: 'UdL/Agrotecnio' },
-        { id: 14, nombre: 'Oscar Pardo', especie: ['Vacuna'], tecnologia: ['Identificación y monitorización', 'Detección y medición'], lineas: ['Optimización de recursos'], rol: 'Técnico', institucion: 'UCO' },
-        { id: 15, nombre: 'Paula Navarro', especie: ['Caprina', 'Vacuna'], tecnologia: ['Identificación y monitorización', 'Analisis de imágenes'], lineas: ['Comportamineto animal'], rol: 'IP', institucion: 'CICYTEX' }
+        { id: 1, nombre: 'Ana García', especie: ['Ovina', 'Caprina'], tecnología: ['Identificación y monitorización'], lineas: ['Comportamineto animal'], rol: 'IP', institucion: 'UPV' },
+        { id: 2, nombre: 'Bruno Soler', especie: ['Ovina'], tecnología: ['Identificación y monitorización', 'Automatización y robots'], lineas: ['Optimización de recursos'], rol: 'Postdoc', institucion: 'UPV' },
+        { id: 3, nombre: 'Carla Pons', especie: ['Caprina'], tecnología: ['Identificación y monitorización', 'Analisis de imágenes'], lineas: ['Comportamineto animal'], rol: 'Predoc', institucion: 'UPV' },
+        { id: 4, nombre: 'David Roca', especie: ['Porcina'], tecnología: ['Ciencia de datos', 'Automatización y robots'], lineas: ['Optimización de recursos'], rol: 'IP', institucion: 'UdL/Agrotecnio' },
+        { id: 5, nombre: 'Elena Ferré', especie: ['Porcina', 'Avícola'], tecnología: ['Automatización y robots', 'Detección y medición'], lineas: ['Optimización de recursos'], rol: 'Técnico', institucion: 'UdL/Agrotecnio' },
+        { id: 6, nombre: 'Felipe Sanz', especie: ['Vacuna'], tecnología: ['Identificación y monitorización', 'Psicionamiento y navegación'], lineas: ['Comportamineto animal'], rol: 'IP', institucion: 'UCO' },
+        { id: 7, nombre: 'Gloria Mínguez', especie: ['Vacuna'], tecnología: ['Identificación y monitorización', 'Detección y medición'], lineas: ['Salud animal'], rol: 'Postdoc', institucion: 'UCO' },
+        { id: 8, nombre: 'Hector Blanes', especie: ['Ovina'], tecnología: ['Analisis de imágenes', 'Ciencia de datos'], lineas: ['Comportamineto animal'], rol: 'Predoc', institucion: 'USAL' },
+        { id: 9, nombre: 'Irene Jiménez', especie: ['Ovina', 'Cunícula'], tecnología: ['Biosensores', 'Identificación y monitorización'], lineas: ['Optimización de recursos'], rol: 'IP', institucion: 'USAL' },
+        { id: 10, nombre: 'Javier Luna', especie: ['Avícola'], tecnología: ['Detección y medición', 'Automatización y robots'], lineas: ['Optimización de recursos'], rol: 'Técnico', institucion: 'UAB' },
+        { id: 11, nombre: 'Laura Vidal', especie: ['Avícola', 'Porcina'], tecnología: ['Automatización y robots', 'Ciencia de datos'], lineas: ['Optimización de recursos'], rol: 'IP', institucion: 'UAB' },
+        { id: 12, nombre: 'Marco Rubio', especie: ['Caprina'], tecnología: ['Detección y medición', 'Psicionamiento y navegación'], lineas: ['Salud animal'], rol: 'Postdoc', institucion: 'UPV' },
+        { id: 13, nombre: 'Nora Casado', especie: ['Porcina'], tecnología: ['Ciencia de datos', 'Analisis de imágenes'], lineas: ['Comportamineto animal'], rol: 'Predoc', institucion: 'UdL/Agrotecnio' },
+        { id: 14, nombre: 'Oscar Pardo', especie: ['Vacuna'], tecnología: ['Identificación y monitorización', 'Detección y medición'], lineas: ['Optimización de recursos'], rol: 'Técnico', institucion: 'UCO' },
+        { id: 15, nombre: 'Paula Navarro', especie: ['Caprina', 'Vacuna'], tecnología: ['Identificación y monitorización', 'Analisis de imágenes'], lineas: ['Comportamineto animal'], rol: 'IP', institucion: 'CICYTEX' }
     ];
 
     const filterConfig = {
